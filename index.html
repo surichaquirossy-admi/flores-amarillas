@@ -348,7 +348,88 @@ function dibujarFlores(ary,arx){
   ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
 }
 
-// LOOP
+// TEXTO EN LOS ESPIRALES
+var FRASES=[
+  'Feliz Dia de las Flores Amarillas',
+  'Que esta flor te alcance',
+  'Las flores amarillas son para ti',
+  '21 de Septiembre',
+  'Petalos de luz y alegria',
+  'Tu sonrisa ilumina todo',
+  'Con todo mi carino',
+  'Gracias por existir',
+  'Hoy el mundo florece por ti',
+  'Eres mi flor favorita'
+];
+
+function dibujarTextoEspirales(ary,arx){
+  var RM=radioMax();var BRAZOS=3;
+  ctx.save();
+  for(var b=0;b<BRAZOS;b++){
+    var off=(b/BRAZOS)*PI2;
+    var frase=FRASES[b%FRASES.length];
+    var chars=frase.split('');
+    var totalChars=chars.length;
+    // distribuir los caracteres a lo largo del brazo espiral
+    for(var ci=0;ci<totalChars;ci++){
+      var frac=0.08+(ci/totalChars)*0.82; // del 8% al 90% del radio
+      var r=5+frac*RM;
+      var ang=frac*Math.PI*5+off;
+      // posicion 3D del caracter
+      var wx=Math.cos(ang)*r, wz=Math.sin(ang)*r;
+      var proj=proyectar(wx,0,wz,ary,arx);
+      var sx=proj.sx,sy=proj.sy,sf=proj.sf;
+      if(sx<-30||sx>W+30||sy<-30||sy>H+30)continue;
+      // angulo de rotacion del caracter — tangente a la espiral
+      var angSig=frac*Math.PI*5+off+0.08;
+      var wxx=Math.cos(angSig)*r, wzz=Math.sin(angSig)*r;
+      var projSig=proyectar(wxx,0,wzz,ary,arx);
+      var dx=projSig.sx-sx, dy=projSig.sy-sy;
+      var angChar=Math.atan2(dy,dx);
+      // tamanio y opacidad segun profundidad
+      var fs=Math.max(7,Math.round(sf*14));
+      var op=Math.min(0.75,sf*1.1)*(.6+.4*Math.sin(t*0.8+ci*0.3+b));
+      if(op<0.08)continue;
+      ctx.save();
+      ctx.translate(sx,sy);
+      ctx.rotate(angChar);
+      ctx.globalAlpha=op;
+      ctx.font='italic '+fs+'px Georgia,serif';
+      ctx.fillStyle='rgba(255,220,80,1)';
+      ctx.fillText(chars[ci],0,0);
+      ctx.restore();
+    }
+  }
+  // frases adicionales en orbitas mas lejanas
+  for(var fi=0;fi<2;fi++){
+    var frase2=FRASES[(fi+3)%FRASES.length];
+    var chars2=frase2.split('');
+    var rOrb=RM*(0.55+fi*0.3);
+    for(var ci=0;ci<chars2.length;ci++){
+      var angPos=(ci/chars2.length)*PI2 + angRotY*(0.6+fi*0.2) + fi*Math.PI;
+      var wx=Math.cos(angPos)*rOrb, wz=Math.sin(angPos)*rOrb;
+      var proj=proyectar(wx,0,wz,ary,arx);
+      var sx=proj.sx,sy=proj.sy,sf=proj.sf;
+      if(sx<-30||sx>W+30||sy<-30||sy>H+30)continue;
+      // tangente
+      var ang2=(ci/chars2.length)*PI2+angRotY*(0.6+fi*0.2)+fi*Math.PI+0.08;
+      var px2=Math.cos(ang2)*rOrb,pz2=Math.sin(ang2)*rOrb;
+      var ps2=proyectar(px2,0,pz2,ary,arx);
+      var ac=Math.atan2(ps2.sy-proj.sy,ps2.sx-proj.sx);
+      var fs2=Math.max(6,Math.round(sf*12));
+      var op2=Math.min(0.65,sf*1.0)*(.5+.5*Math.sin(t*0.6+ci*0.4));
+      if(op2<0.07)continue;
+      ctx.save();ctx.translate(sx,sy);ctx.rotate(ac);
+      ctx.globalAlpha=op2;
+      ctx.font='italic '+fs2+'px Georgia,serif';
+      ctx.fillStyle='rgba(255,200,60,.9)';
+      ctx.fillText(chars2[ci],0,0);
+      ctx.restore();
+    }
+  }
+  ctx.restore();
+  ctx.globalAlpha=1;
+}
 function loop(){
   requestAnimationFrame(loop);
   if(!activa)return;
@@ -365,6 +446,7 @@ function loop(){
   dibujarFondo();
   dibujarAnillos(angRotY,angRotX);
   dibujarEspirales(angRotY,angRotX);
+  dibujarTextoEspirales(angRotY,angRotX);
   dibujarGalaxia(angRotY,angRotX);
   dibujarEstrellas(angRotY,angRotX);
   dibujarFlores(angRotY,angRotX);
