@@ -10,201 +10,845 @@
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:Georgia,serif;touch-action:none;}
 
+    /* ── PANTALLA ENTRADA ── */
     #entrada{
       position:fixed;inset:0;
-      background:radial-gradient(ellipse at 50% 60%,#1e0900 0%,#0a0400 55%,#000 100%);
+      background:radial-gradient(ellipse at 50% 55%,#200a00 0%,#0d0400 50%,#000 100%);
       display:flex;flex-direction:column;align-items:center;justify-content:center;
-      z-index:20;transition:opacity 1.4s ease,transform 1.4s ease;
+      z-index:20;transition:opacity 1.5s ease,transform 1.5s ease;
     }
-    #entrada.ocultar{opacity:0;transform:scale(1.25);pointer-events:none;}
+    #entrada.ocultar{opacity:0;transform:scale(1.3);pointer-events:none;}
 
-    .rings{position:relative;display:flex;align-items:center;justify-content:center;width:220px;height:220px;}
-    .ring{position:absolute;border-radius:50%;border:2px solid rgba(255,200,0,.6);animation:ring 2.6s ease-out infinite;}
-    .ring:nth-child(1){width:130px;height:130px;animation-delay:0s;}
-    .ring:nth-child(2){width:170px;height:170px;animation-delay:.7s;}
-    .ring:nth-child(3){width:210px;height:210px;animation-delay:1.4s;}
-    @keyframes ring{0%{transform:scale(.5);opacity:.9;}100%{transform:scale(1.1);opacity:0;}}
+    /* partículas entrada */
+    #ep{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+    .ep-dot{position:absolute;border-radius:50%;background:radial-gradient(circle,#ffdd00,transparent);
+      animation:epf var(--d) ease-in-out infinite alternate;opacity:var(--o);}
+    @keyframes epf{from{transform:translate(0,0) scale(1);}to{transform:translate(var(--tx),var(--ty)) scale(var(--s));}}
+
+    .rings{position:relative;display:flex;align-items:center;justify-content:center;width:240px;height:240px;}
+    .ring{position:absolute;border-radius:50%;border:2px solid rgba(255,200,0,.5);animation:ring 2.8s ease-out infinite;}
+    .ring:nth-child(1){width:140px;height:140px;animation-delay:0s;}
+    .ring:nth-child(2){width:185px;height:185px;animation-delay:.8s;}
+    .ring:nth-child(3){width:230px;height:230px;animation-delay:1.6s;}
+    @keyframes ring{0%{transform:scale(.4);opacity:.9;}100%{transform:scale(1.1);opacity:0;}}
 
     #florBtn{
       position:relative;z-index:2;cursor:pointer;
       animation:idle 3.5s ease-in-out infinite;
-      filter:drop-shadow(0 0 18px #ffaa00) drop-shadow(0 0 40px #ff6600);
-      -webkit-filter:drop-shadow(0 0 18px #ffaa00) drop-shadow(0 0 40px #ff6600);
+      filter:drop-shadow(0 0 22px #ffaa00) drop-shadow(0 0 50px #ff5500);
+      -webkit-filter:drop-shadow(0 0 22px #ffaa00) drop-shadow(0 0 50px #ff5500);
       transition:transform .15s;
     }
-    #florBtn:active{transform:scale(.9);}
-    @keyframes idle{0%,100%{transform:scale(1) rotate(0deg);}30%{transform:scale(1.08) rotate(7deg);}70%{transform:scale(1.05) rotate(-5deg);}}
+    #florBtn:active{transform:scale(.88)!important;}
+    @keyframes idle{0%,100%{transform:scale(1) rotate(0deg);}33%{transform:scale(1.1) rotate(8deg);}66%{transform:scale(1.06) rotate(-6deg);}}
 
-    .hint{margin-top:22px;color:#ffd54f;font-size:1rem;letter-spacing:3px;text-transform:uppercase;text-shadow:0 0 10px #ffaa00;animation:blink 2s ease-in-out infinite;}
-    @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
-    .subtitulo-entrada{margin-top:10px;color:rgba(255,245,200,.6);font-size:.82rem;letter-spacing:4px;text-transform:uppercase;text-align:center;padding:0 20px;}
+    .hint{margin-top:26px;color:#ffd54f;font-size:1.05rem;letter-spacing:3px;
+      text-transform:uppercase;text-shadow:0 0 12px #ffaa00;animation:blink 2s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+    .sub-entrada{margin-top:12px;color:rgba(255,245,200,.5);font-size:.8rem;
+      letter-spacing:5px;text-transform:uppercase;text-align:center;padding:0 30px;}
 
-    #cvs{position:fixed;inset:0;display:block;opacity:0;transition:opacity 1.8s ease .3s;}
+    /* ── CANVAS ── */
+    #cvs{position:fixed;inset:0;display:block;opacity:0;transition:opacity 2s ease .2s;}
     #cvs.vis{opacity:1;}
 
-    #ui{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;padding-top:clamp(20px,6vw,44px);pointer-events:none;z-index:10;opacity:0;transition:opacity 1.8s ease 1s;}
+    /* ── UI GALAXIA ── */
+    #ui{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+      padding-top:clamp(18px,5vw,40px);pointer-events:none;z-index:10;
+      opacity:0;transition:opacity 2s ease .9s;}
     #ui.vis{opacity:1;}
 
-    .ttl{
-      font-size:clamp(1.4rem,5.5vw,2.8rem);font-weight:bold;text-transform:uppercase;
-      letter-spacing:3px;text-align:center;line-height:1.25;
+    .ttl{font-size:clamp(1.5rem,5.5vw,3rem);font-weight:bold;text-transform:uppercase;
+      letter-spacing:3px;text-align:center;line-height:1.2;
       background:linear-gradient(90deg,#ffee00,#ffcc00,#ff9900,#ffee00);
-      background-size:300%;
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      animation:gradmove 3s linear infinite;
-      filter:drop-shadow(0 0 8px #ffcc00);-webkit-filter:drop-shadow(0 0 8px #ffcc00);
-    }
+      background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;animation:gradmove 3s linear infinite;
+      filter:drop-shadow(0 0 10px #ffcc00);-webkit-filter:drop-shadow(0 0 10px #ffcc00);}
     @keyframes gradmove{0%{background-position:0%}100%{background-position:300%}}
-    .sub{margin-top:8px;color:rgba(255,245,200,.65);font-size:clamp(.75rem,2vw,.95rem);letter-spacing:5px;text-transform:uppercase;text-align:center;}
+    .sub{margin-top:10px;color:rgba(255,245,200,.6);font-size:clamp(.75rem,2vw,.95rem);
+      letter-spacing:6px;text-transform:uppercase;text-align:center;}
 
-    #volver{
-      position:fixed;bottom:clamp(16px,4vw,28px);left:50%;transform:translateX(-50%);
-      z-index:15;background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.45);
-      color:#ffd54f;padding:10px 28px;border-radius:40px;font-size:.85rem;
-      letter-spacing:2px;text-transform:uppercase;cursor:pointer;pointer-events:all;
-      opacity:0;transition:opacity 1.8s ease 1.5s,background .3s;
-      backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    /* ── CONTROLES ── */
+    #controles{
+      position:fixed;bottom:clamp(14px,4vw,26px);
+      left:50%;transform:translateX(-50%);
+      z-index:15;display:flex;gap:12px;align-items:center;
+      opacity:0;transition:opacity 2s ease 1.4s;pointer-events:all;
     }
-    #volver:active{background:rgba(255,200,0,.3);}
-    #volver.vis{opacity:1;}
+    #controles.vis{opacity:1;}
+
+    .cbtn{
+      background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.4);
+      color:#ffd54f;padding:9px 22px;border-radius:40px;font-size:.82rem;
+      letter-spacing:2px;text-transform:uppercase;cursor:pointer;
+      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+      transition:background .25s,transform .1s;
+    }
+    .cbtn:active{background:rgba(255,200,0,.3);transform:scale(.95);}
+
+    /* ── VISUALIZADOR MÚSICA ── */
+    #vizCanvas{
+      position:fixed;bottom:0;left:0;width:100%;
+      height:60px;z-index:9;opacity:0;
+      transition:opacity 1.5s ease 1.2s;pointer-events:none;
+    }
+    #vizCanvas.vis{opacity:1;}
   </style>
 </head>
 <body>
 
+<!-- ENTRADA -->
 <div id="entrada">
+  <div id="ep"></div>
   <div class="rings">
     <div class="ring"></div><div class="ring"></div><div class="ring"></div>
-    <svg id="florBtn" width="120" height="120" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="button" aria-label="Abrir galaxia">
+    <svg id="florBtn" width="130" height="130" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="button" aria-label="Abrir galaxia">
       <defs>
-        <radialGradient id="gP" cx="50%" cy="20%" r="80%">
-          <stop offset="0%" stop-color="#FFE234"/><stop offset="50%" stop-color="#FFC200"/><stop offset="100%" stop-color="#E68A00"/>
+        <radialGradient id="gP" cx="50%" cy="18%" r="82%">
+          <stop offset="0%" stop-color="#FFF0A0"/>
+          <stop offset="40%" stop-color="#FFD000"/>
+          <stop offset="100%" stop-color="#E06000"/>
         </radialGradient>
-        <radialGradient id="gC" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#8B4513"/><stop offset="60%" stop-color="#5D2E00"/><stop offset="100%" stop-color="#3B1A00"/>
+        <radialGradient id="gC" cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#A0571A"/>
+          <stop offset="55%" stop-color="#5D2E00"/>
+          <stop offset="100%" stop-color="#2A0E00"/>
         </radialGradient>
-        <filter id="fw"><feGaussianBlur stdDeviation="2.5" result="b"/>
+        <radialGradient id="gBr" cx="38%" cy="32%" r="55%">
+          <stop offset="0%" stop-color="rgba(255,240,140,.5)"/>
+          <stop offset="100%" stop-color="rgba(255,200,0,0)"/>
+        </radialGradient>
+        <filter id="fw" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.8" result="b"/>
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-      <g transform="translate(100,100)" filter="url(#fw)">
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(45)"/>
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(90)"/>
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(135)"/>
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(180)"/>
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(225)"/>
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(270)"/>
-        <ellipse cx="0" cy="-54" rx="17" ry="36" fill="url(#gP)" opacity=".72" transform="rotate(315)"/>
+      <!-- sombra pétalo trasero -->
+      <g transform="translate(100,100)">
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(22.5) translate(1,3)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(67.5) translate(1,3)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(112.5) translate(1,3)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(157.5) translate(1,3)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(202.5) translate(1,3)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(247.5) translate(1,3)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(292.5) translate(1,3)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(337.5) translate(1,3)"/>
       </g>
+      <!-- pétalos traseros -->
       <g transform="translate(100,100)" filter="url(#fw)">
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(22.5)"/>
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(67.5)"/>
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(112.5)"/>
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(157.5)"/>
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(202.5)"/>
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(247.5)"/>
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(292.5)"/>
-        <ellipse cx="0" cy="-58" rx="15" ry="38" fill="url(#gP)" transform="rotate(337.5)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(315)"/>
       </g>
-      <circle cx="100" cy="100" r="27" fill="url(#gC)" filter="url(#fw)"/>
-      <circle cx="100" cy="100" r="21" fill="none" stroke="#7B3F00" stroke-width="1.5" stroke-dasharray="3 2"/>
-      <circle cx="93" cy="93" r="7" fill="rgba(255,210,80,.35)"/>
+      <!-- pétalos frontales -->
+      <g transform="translate(100,100)" filter="url(#fw)">
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(22.5)"/>
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(67.5)"/>
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(112.5)"/>
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(157.5)"/>
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(202.5)"/>
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(247.5)"/>
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(292.5)"/>
+        <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(337.5)"/>
+      </g>
+      <!-- centro -->
+      <circle cx="100" cy="100" r="26" fill="url(#gC)" filter="url(#fw)"/>
+      <circle cx="100" cy="100" r="20" fill="none" stroke="#8B4A00" stroke-width="1.5" stroke-dasharray="3 2" opacity=".8"/>
+      <!-- textura puntitos centro -->
+      <g fill="#3a1200" opacity=".55" transform="translate(100,100)">
+        <circle cx="0"  cy="-12" r="1.8"/><circle cx="8"  cy="-9"  r="1.4"/>
+        <circle cx="12" cy="0"   r="1.8"/><circle cx="8"  cy="9"   r="1.4"/>
+        <circle cx="0"  cy="12"  r="1.8"/><circle cx="-8" cy="9"   r="1.4"/>
+        <circle cx="-12"cy="0"   r="1.8"/><circle cx="-8" cy="-9"  r="1.4"/>
+        <circle cx="0"  cy="0"   r="2.2"/>
+      </g>
+      <!-- brillo centro -->
+      <circle cx="100" cy="100" r="26" fill="url(#gBr)"/>
     </svg>
   </div>
   <p class="hint">✨ Toca la flor ✨</p>
-  <p class="subtitulo-entrada">Día de las Flores Amarillas</p>
+  <p class="sub-entrada">Día de las Flores Amarillas</p>
 </div>
 
+<!-- CANVAS GALAXIA -->
 <canvas id="cvs"></canvas>
+<!-- VISUALIZADOR MÚSICA -->
+<canvas id="vizCanvas"></canvas>
 
+<!-- UI GALAXIA -->
 <div id="ui">
   <h1 class="ttl">Día de las<br>Flores Amarillas</h1>
   <p class="sub">✦ &nbsp;21 de Septiembre&nbsp; ✦</p>
 </div>
-<button id="volver">← Volver</button>
+
+<!-- CONTROLES -->
+<div id="controles">
+  <button class="cbtn" id="btnMusica">🎵 Música</button>
+  <button class="cbtn" id="btnVolver">← Volver</button>
+</div>
 
 <script>
-const PI2=Math.PI*2;
-const rnd=(a,b)=>Math.random()*(b-a)+a;
+'use strict';
+// ═══════════════════════════════════════════════════════
+//  CONSTANTES Y HELPERS
+// ═══════════════════════════════════════════════════════
+const PI2 = Math.PI * 2;
+const rnd = (a,b) => Math.random()*(b-a)+a;
 
-const cvs=document.getElementById('cvs');
-const ctx=cvs.getContext('2d');
-let W,H,CX,CY;
-function resize(){W=window.innerWidth;H=window.innerHeight;CX=W/2;CY=H/2;cvs.width=W;cvs.height=H;}
+// ═══════════════════════════════════════════════════════
+//  CANVAS PRINCIPAL
+// ═══════════════════════════════════════════════════════
+const cvs = document.getElementById('cvs');
+const ctx = cvs.getContext('2d');
+let W, H, CX, CY;
+
+function resize() {
+  W = window.innerWidth; H = window.innerHeight;
+  CX = W/2; CY = H/2;
+  cvs.width = W; cvs.height = H;
+}
 resize();
-window.addEventListener('resize',()=>{resize();construirGalaxia();crearEstrellas();crearFlores();});
+window.addEventListener('resize', () => { resize(); init(); });
 
-let t=0,activa=false,angRot=0;
-
-// FONDO ESTELAR
-const FONDO=[];
-function crearFondo(){FONDO.length=0;for(let i=0;i<220;i++)FONDO.push({x:rnd(0,1),y:rnd(0,1),r:rnd(.4,1.6),br:rnd(.3,1),vel:rnd(.3,1.2),fase:rnd(0,PI2)});}
-function dibujarFondo(){for(const s of FONDO){ctx.globalAlpha=s.br*(.5+.5*Math.sin(t*s.vel+s.fase));ctx.fillStyle='#fff9e0';ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,PI2);ctx.fill();}ctx.globalAlpha=1;}
-
-// GALAXIA ESPIRAL 3D
-const PART=[];const BRAZOS=3;const POR_BRAZO=700;
-const INCL=0.52;
-function radioMax(){return Math.min(W,H)*0.42;}
-function construirGalaxia(){
-  PART.length=0;const RM=radioMax();
-  for(let b=0;b<BRAZOS;b++){const off=(b/BRAZOS)*PI2;for(let i=0;i<POR_BRAZO;i++){const frac=i/POR_BRAZO;const r=4+frac*RM;const ang=frac*Math.PI*5+off;PART.push({x0:Math.cos(ang)*r+rnd(-1,1)*r*.22,y0:rnd(-1,1)*(1-frac)*RM*.08,z0:Math.sin(ang)*r+rnd(-1,1)*r*.22,r:(1-frac)*2.4+rnd(.2,1.2),h:rnd(30,52),s:rnd(70,100),l:rnd(55,90),a:rnd(.4,.9),frac});}}
-  for(let i=0;i<400;i++){const r=rnd(0,radioMax());const ang=rnd(0,PI2);PART.push({x0:Math.cos(ang)*r,y0:rnd(-1,1)*RM*.04,z0:Math.sin(ang)*r,r:rnd(.3,1),h:rnd(35,55),s:rnd(60,90),l:rnd(60,85),a:rnd(.15,.4),frac:r/radioMax()});}
-}
-function proyectar(x0,y0,z0,ar){
-  const xr=x0*Math.cos(ar)+z0*Math.sin(ar);const zr=-x0*Math.sin(ar)+z0*Math.cos(ar);
-  const yr=y0*Math.cos(INCL)-zr*Math.sin(INCL);const zf=y0*Math.sin(INCL)+zr*Math.cos(INCL);
-  const fov=600;const dist=fov+zf*.25;
-  return{sx:CX+(xr*fov)/dist,sy:CY+(yr*fov)/dist,sf:fov/dist};
-}
-function dibujarGalaxia(ar){for(const p of PART){const{sx,sy,sf}=proyectar(p.x0,p.y0,p.z0,ar);if(sx<-10||sx>W+10||sy<-10||sy>H+10)continue;ctx.globalAlpha=p.a*Math.min(1,sf*1.4);ctx.fillStyle=`hsl(${p.h},${p.s}%,${p.l}%)`;ctx.beginPath();ctx.arc(sx,sy,Math.max(.3,p.r*sf),0,PI2);ctx.fill();}ctx.globalAlpha=1;}
-
-// HALO
-function dibujarHalo(pulso){
-  const r1=Math.min(W,H)*.12*pulso;const r2=Math.min(W,H)*.28*pulso;
-  let g=ctx.createRadialGradient(CX,CY,0,CX,CY,r1);g.addColorStop(0,'rgba(255,240,120,0.95)');g.addColorStop(.35,'rgba(255,190,40,0.65)');g.addColorStop(1,'rgba(255,120,0,0)');ctx.globalAlpha=1;ctx.fillStyle=g;ctx.beginPath();ctx.arc(CX,CY,r1,0,PI2);ctx.fill();
-  g=ctx.createRadialGradient(CX,CY,r1*.2,CX,CY,r2);g.addColorStop(0,'rgba(255,200,50,0.3)');g.addColorStop(1,'rgba(255,100,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(CX,CY,r2,0,PI2);ctx.fill();
+// ═══════════════════════════════════════════════════════
+//  PARTÍCULAS FONDO ENTRADA
+// ═══════════════════════════════════════════════════════
+const epEl = document.getElementById('ep');
+for (let i = 0; i < 55; i++) {
+  const d = document.createElement('div');
+  d.className = 'ep-dot';
+  const s = rnd(1,4);
+  d.style.cssText = `width:${s}px;height:${s}px;left:${rnd(0,100)}%;top:${rnd(0,100)}%;
+    --d:${rnd(3,7).toFixed(1)}s;--o:${rnd(.05,.35).toFixed(2)};
+    --tx:${rnd(-25,25).toFixed(0)}px;--ty:${rnd(-25,25).toFixed(0)}px;
+    --s:${rnd(.5,1.8).toFixed(2)};animation-delay:${rnd(0,5).toFixed(1)}s;`;
+  epEl.appendChild(d);
 }
 
-// ESTRELLAS DORADAS
-const ESTRELLAS=[];
-function crearEstrellas(){ESTRELLAS.length=0;const RM=radioMax();for(let i=0;i<55;i++){const r=rnd(RM*.1,RM*.92);ESTRELLAS.push({r,ang:rnd(0,PI2),velAng:rnd(.004,.012)*(Math.random()>.5?1:-1),ampY:rnd(.01,.04)*RM,velY:rnd(.4,1.2),faseY:rnd(0,PI2),sz:rnd(2.5,6.5),faseBr:rnd(0,PI2),velBr:rnd(.8,2.5)});}}
-function estrella5(cx,cy,r1,r2,rot){ctx.beginPath();for(let i=0;i<10;i++){const a=rot+(i/10)*PI2-Math.PI/2;const rr=i%2===0?r1:r2;i===0?ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr):ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}ctx.closePath();}
-function dibujarEstrellas(ar){
-  for(const s of ESTRELLAS){s.ang+=s.velAng;const{sx,sy,sf}=proyectar(Math.cos(s.ang)*s.r,Math.sin(t*s.velY+s.faseY)*s.ampY,Math.sin(s.ang)*s.r,ar);const br=.5+.5*Math.sin(t*s.velBr+s.faseBr);const sz=s.sz*sf*(0.8+.3*br);if(sz<.5)continue;
-    ctx.globalAlpha=br*.55;ctx.strokeStyle='#fffde0';ctx.lineWidth=sz*.15;ctx.beginPath();ctx.moveTo(sx-sz*2.5,sy);ctx.lineTo(sx+sz*2.5,sy);ctx.stroke();ctx.beginPath();ctx.moveTo(sx,sy-sz*2.5);ctx.lineTo(sx,sy+sz*2.5);ctx.stroke();
-    ctx.globalAlpha=.7+.3*br;const gS=ctx.createRadialGradient(sx,sy,0,sx,sy,sz*1.4);gS.addColorStop(0,'rgba(255,255,200,1)');gS.addColorStop(.5,'rgba(255,210,50,.8)');gS.addColorStop(1,'rgba(255,140,0,0)');ctx.fillStyle=gS;estrella5(sx,sy,sz*1.4,sz*.55,t*.4);ctx.fill();}
+// ═══════════════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════════════
+let t = 0, angRot = 0, activa = false;
+
+// ═══════════════════════════════════════════════════════
+//  PROYECCIÓN 3D
+// ═══════════════════════════════════════════════════════
+const INCL = 0.48; // inclinación del disco
+function proyectar(x0, y0, z0, ar) {
+  // rotación en Y
+  const xr =  x0*Math.cos(ar) + z0*Math.sin(ar);
+  const zr = -x0*Math.sin(ar) + z0*Math.cos(ar);
+  // inclinación en X
+  const yr = y0*Math.cos(INCL) - zr*Math.sin(INCL);
+  const zf = y0*Math.sin(INCL) + zr*Math.cos(INCL);
+  // perspectiva
+  const fov = 580;
+  const dist = fov + zf * 0.3;
+  return { sx: CX + (xr*fov)/dist, sy: CY + (yr*fov)/dist, sf: fov/dist };
+}
+
+function radioMax() { return Math.min(W,H) * 0.44; }
+
+// ═══════════════════════════════════════════════════════
+//  1. FONDO ESTELAR
+// ═══════════════════════════════════════════════════════
+let FONDO = [];
+function crearFondo() {
+  FONDO = Array.from({length:240}, () => ({
+    x:rnd(0,1), y:rnd(0,1), r:rnd(.3,1.8),
+    br:rnd(.2,1), vel:rnd(.3,1.4), fase:rnd(0,PI2)
+  }));
+}
+function dibujarFondo() {
+  for (const s of FONDO) {
+    ctx.globalAlpha = s.br * (.4 + .6*Math.sin(t*s.vel+s.fase));
+    ctx.fillStyle = '#fff9e0';
+    ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r, 0, PI2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ═══════════════════════════════════════════════════════
+//  2. PARTÍCULAS DE GALAXIA ESPIRAL
+// ═══════════════════════════════════════════════════════
+let PART = [];
+const BRAZOS = 3, POR_BRAZO = 650;
+
+function construirGalaxia() {
+  PART = [];
+  const RM = radioMax();
+  for (let b = 0; b < BRAZOS; b++) {
+    const off = (b/BRAZOS)*PI2;
+    for (let i = 0; i < POR_BRAZO; i++) {
+      const frac = i/POR_BRAZO;
+      const r = 5 + frac*RM;
+      const ang = frac*Math.PI*5 + off;
+      PART.push({
+        x0: Math.cos(ang)*r + rnd(-1,1)*r*.20,
+        y0: rnd(-1,1)*(1-frac)*RM*.07,
+        z0: Math.sin(ang)*r + rnd(-1,1)*r*.20,
+        r:  (1-frac)*2.6 + rnd(.15,1.1),
+        h:  rnd(28,54), s:rnd(72,100), l:rnd(55,92),
+        a:  rnd(.35,.9)
+      });
+    }
+  }
+  // polvo difuso
+  for (let i = 0; i < 350; i++) {
+    const r = rnd(0, RM), ang = rnd(0,PI2);
+    PART.push({
+      x0: Math.cos(ang)*r, y0: rnd(-1,1)*RM*.05, z0: Math.sin(ang)*r,
+      r:rnd(.2,.9), h:rnd(32,58), s:rnd(55,85), l:rnd(58,82), a:rnd(.1,.35)
+    });
+  }
+}
+
+function dibujarGalaxia(ar) {
+  for (const p of PART) {
+    const {sx,sy,sf} = proyectar(p.x0, p.y0, p.z0, ar);
+    if (sx<-8||sx>W+8||sy<-8||sy>H+8) continue;
+    ctx.globalAlpha = p.a * Math.min(1, sf*1.3);
+    ctx.fillStyle = `hsl(${p.h},${p.s}%,${p.l}%)`;
+    ctx.beginPath(); ctx.arc(sx, sy, Math.max(.25, p.r*sf), 0, PI2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ═══════════════════════════════════════════════════════
+//  3. ESPIRALES LUMINOSAS
+// ═══════════════════════════════════════════════════════
+function dibujarEspirales(ar) {
+  const RM = radioMax();
+  for (let b = 0; b < BRAZOS; b++) {
+    const off = (b/BRAZOS)*PI2;
+    // línea principal del brazo
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    let first = true;
+    for (let i = 0; i <= 200; i++) {
+      const frac = i/200;
+      const r = 5 + frac*RM;
+      const ang = frac*Math.PI*5 + off;
+      const {sx,sy} = proyectar(Math.cos(ang)*r, 0, Math.sin(ang)*r, ar);
+      first ? ctx.moveTo(sx,sy) : ctx.lineTo(sx,sy);
+      first = false;
+    }
+    ctx.strokeStyle = `hsla(${38+b*14},100%,65%,.22)`;
+    ctx.stroke();
+
+    // borde luminoso más fino
+    ctx.lineWidth = .5;
+    ctx.beginPath(); first = true;
+    for (let i = 0; i <= 200; i++) {
+      const frac = i/200;
+      const r = 5 + frac*RM;
+      const ang = frac*Math.PI*5 + off;
+      const {sx,sy} = proyectar(Math.cos(ang)*r, 0, Math.sin(ang)*r, ar);
+      first ? ctx.moveTo(sx,sy) : ctx.lineTo(sx,sy);
+      first = false;
+    }
+    ctx.strokeStyle = `hsla(${55+b*10},100%,85%,.12)`;
+    ctx.stroke();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  4. ANILLOS ORBITALES
+// ═══════════════════════════════════════════════════════
+function dibujarAnillos(ar) {
+  const RM = radioMax();
+  [.28,.52,.78].forEach((frac,i) => {
+    const r = RM*frac, N = 110;
+    ctx.beginPath();
+    for (let j = 0; j <= N; j++) {
+      const ang = (j/N)*PI2;
+      const {sx,sy} = proyectar(Math.cos(ang)*r, 0, Math.sin(ang)*r, ar);
+      j===0 ? ctx.moveTo(sx,sy) : ctx.lineTo(sx,sy);
+    }
+    ctx.strokeStyle = ['rgba(255,215,45,.13)','rgba(255,155,15,.11)','rgba(255,90,0,.09)'][i];
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  5. HALO CENTRAL
+// ═══════════════════════════════════════════════════════
+function dibujarHalo(pulso) {
+  const r1 = Math.min(W,H)*.115*pulso;
+  const r2 = Math.min(W,H)*.30*pulso;
+  let g = ctx.createRadialGradient(CX,CY,0, CX,CY,r1);
+  g.addColorStop(0,   'rgba(255,245,130,.98)');
+  g.addColorStop(.3,  'rgba(255,195,45,.70)');
+  g.addColorStop(1,   'rgba(255,110,0,0)');
+  ctx.globalAlpha = 1; ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(CX,CY,r1,0,PI2); ctx.fill();
+  g = ctx.createRadialGradient(CX,CY, r1*.15, CX,CY, r2);
+  g.addColorStop(0, 'rgba(255,195,50,.28)');
+  g.addColorStop(1, 'rgba(255,90,0,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(CX,CY,r2,0,PI2); ctx.fill();
+}
+
+// ═══════════════════════════════════════════════════════
+//  6. ESTRELLAS DORADAS
+// ═══════════════════════════════════════════════════════
+let ESTRELLAS = [];
+function crearEstrellas() {
+  const RM = radioMax();
+  ESTRELLAS = Array.from({length:60}, () => {
+    const r = rnd(RM*.08, RM*.94);
+    return {
+      r, ang:rnd(0,PI2),
+      velAng: rnd(.003,.011)*(Math.random()>.5?1:-1),
+      ampY: rnd(.008,.042)*RM, velY:rnd(.35,1.3), faseY:rnd(0,PI2),
+      sz: rnd(2.2,7), faseBr:rnd(0,PI2), velBr:rnd(.7,2.6)
+    };
+  });
+}
+function estrella5(cx,cy,r1,r2,rot) {
+  ctx.beginPath();
+  for (let i=0;i<10;i++) {
+    const a = rot+(i/10)*PI2-Math.PI/2;
+    const rr = i%2===0?r1:r2;
+    i===0?ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr)
+         :ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);
+  }
+  ctx.closePath();
+}
+function dibujarEstrellas(ar) {
+  for (const s of ESTRELLAS) {
+    s.ang += s.velAng;
+    const wx = Math.cos(s.ang)*s.r;
+    const wy = Math.sin(t*s.velY+s.faseY)*s.ampY;
+    const wz = Math.sin(s.ang)*s.r;
+    const {sx,sy,sf} = proyectar(wx,wy,wz,ar);
+    const br = .5+.5*Math.sin(t*s.velBr+s.faseBr);
+    const sz = s.sz*sf*(0.75+.35*br);
+    if (sz<.4) continue;
+    // cruz destello
+    ctx.globalAlpha = br*.52; ctx.strokeStyle='#fffde0'; ctx.lineWidth=sz*.13;
+    ctx.beginPath();ctx.moveTo(sx-sz*2.8,sy);ctx.lineTo(sx+sz*2.8,sy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sx,sy-sz*2.8);ctx.lineTo(sx,sy+sz*2.8);ctx.stroke();
+    // diagonal destello
+    ctx.globalAlpha = br*.22;
+    ctx.beginPath();ctx.moveTo(sx-sz*1.8,sy-sz*1.8);ctx.lineTo(sx+sz*1.8,sy+sz*1.8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sx+sz*1.8,sy-sz*1.8);ctx.lineTo(sx-sz*1.8,sy+sz*1.8);ctx.stroke();
+    // cuerpo estrella
+    ctx.globalAlpha = .65+.35*br;
+    const gS = ctx.createRadialGradient(sx,sy,0,sx,sy,sz*1.5);
+    gS.addColorStop(0,'rgba(255,255,210,1)');
+    gS.addColorStop(.45,'rgba(255,215,55,.85)');
+    gS.addColorStop(1,'rgba(255,140,0,0)');
+    ctx.fillStyle = gS;
+    estrella5(sx,sy,sz*1.5,sz*.55, t*.38);
+    ctx.fill();
+  }
   ctx.globalAlpha=1;
 }
 
-// FLORES ORBITANDO
-const FLORES=[];
-const CF=[{p1:'#FFE234',p2:'#FFC200',c:'#5D2E00'},{p1:'#FFEF60',p2:'#FFB300',c:'#4a1f00'},{p1:'#FFF176',p2:'#FFAA00',c:'#7B3F00'},{p1:'#FFD700',p2:'#E68A00',c:'#3B1A00'},{p1:'#FFCC02',p2:'#FF8C00',c:'#5D4000'}];
-const FLOR_IMGS=[];
-(function(){CF.forEach(cf=>{const sz=80;const oc=document.createElement('canvas');oc.width=oc.height=sz;const c=oc.getContext('2d');const cx=sz/2,cy=sz/2,pr=sz*.34,cr=sz*.14;for(let capa=0;capa<2;capa++){for(let i=0;i<8;i++){const ang=(i/8)*PI2+(capa?Math.PI/8:0);const px=cx+Math.cos(ang)*pr*.55;const py=cy+Math.sin(ang)*pr*.55;const gp=c.createRadialGradient(px,py,0,px,py,pr*.78);gp.addColorStop(0,capa?cf.p1:cf.p2);gp.addColorStop(1,'rgba(0,0,0,0)');c.globalAlpha=capa?1:.65;c.fillStyle=gp;c.beginPath();c.ellipse(px,py,pr*.42,pr*.72,ang+Math.PI/2,0,PI2);c.fill();}}c.globalAlpha=1;const gc=c.createRadialGradient(cx,cy,0,cx,cy,cr);gc.addColorStop(0,'#9B5523');gc.addColorStop(.5,cf.c);gc.addColorStop(1,'#2a0f00');c.fillStyle=gc;c.beginPath();c.arc(cx,cy,cr,0,PI2);c.fill();c.fillStyle='rgba(255,240,150,.35)';c.beginPath();c.arc(cx-cr*.3,cy-cr*.3,cr*.55,0,PI2);c.fill();FLOR_IMGS.push(oc);});})();
-function crearFlores(){FLORES.length=0;const RM=radioMax();for(let i=0;i<16;i++){const r=rnd(RM*.12,RM*.9);FLORES.push({r,ang:(i/16)*PI2+rnd(0,.4),velAng:rnd(.003,.009)*(Math.random()>.5?1:-1),ampY:rnd(.01,.05)*RM,velY:rnd(.3,.9),faseY:rnd(0,PI2),rotAng:rnd(0,PI2),rotVel:rnd(-.015,.015),szBase:rnd(18,36),img:FLOR_IMGS[i%FLOR_IMGS.length]});}}
-function dibujarFlores(ar){for(const f of FLORES){f.ang+=f.velAng;f.rotAng+=f.rotVel;const{sx,sy,sf}=proyectar(Math.cos(f.ang)*f.r,Math.sin(t*f.velY+f.faseY)*f.ampY,Math.sin(f.ang)*f.r,ar);const s=f.szBase*sf*(1+Math.sin(t*1.2+f.faseY)*.08);if(s<3)continue;ctx.save();ctx.translate(sx,sy);ctx.rotate(f.rotAng);ctx.globalAlpha=Math.min(1,sf*1.8)*.92;ctx.drawImage(f.img,-s/2,-s/2,s,s);ctx.restore();}ctx.globalAlpha=1;}
+// ═══════════════════════════════════════════════════════
+//  7. FLORES ORBITANDO — bien separadas y flotando
+// ═══════════════════════════════════════════════════════
 
-// ESPIRALES Y ANILLOS
-function dibujarEspirales(ar){const RM=radioMax();ctx.lineWidth=1;for(let b=0;b<BRAZOS;b++){const off=(b/BRAZOS)*PI2;ctx.beginPath();let first=true;for(let i=0;i<=180;i++){const frac=i/180;const r=3+frac*RM;const ang=frac*Math.PI*5+off;const{sx,sy}=proyectar(Math.cos(ang)*r,0,Math.sin(ang)*r,ar);first?ctx.moveTo(sx,sy):ctx.lineTo(sx,sy);first=false;}ctx.strokeStyle=`hsla(${30+b*12},100%,65%,0.18)`;ctx.stroke();}}
-function dibujarAnillos(ar){const RM=radioMax();[.3,.55,.82].forEach((frac,i)=>{const r=RM*frac;ctx.beginPath();for(let j=0;j<=120;j++){const ang=(j/120)*PI2;const{sx,sy}=proyectar(Math.cos(ang)*r,0,Math.sin(ang)*r,ar);j===0?ctx.moveTo(sx,sy):ctx.lineTo(sx,sy);}ctx.strokeStyle=['rgba(255,220,50,0.1)','rgba(255,160,20,0.1)','rgba(255,100,0,0.1)'][i];ctx.lineWidth=1;ctx.stroke();});}
+// Variantes de color de flor
+const CF = [
+  {p1:'#FFF5A0',p2:'#FFD000',p3:'#E06000',c:'#5D2E00'},
+  {p1:'#FFEF70',p2:'#FFB300',p3:'#D05000',c:'#4a1f00'},
+  {p1:'#FFFAC0',p2:'#FFE000',p3:'#CC8000',c:'#7B3F00'},
+  {p1:'#FFE060',p2:'#FF9500',p3:'#C04000',c:'#3B1A00'},
+  {p1:'#FFF080',p2:'#FFCC00',p3:'#E07000',c:'#5D4000'},
+];
 
-// LOOP
-function loop(){requestAnimationFrame(loop);if(!activa)return;t+=.012;angRot+=.007;ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,0,W,H);dibujarFondo();dibujarAnillos(angRot);dibujarEspirales(angRot);dibujarGalaxia(angRot);dibujarEstrellas(angRot);dibujarFlores(angRot);dibujarHalo(1+Math.sin(t*1.4)*.07);}
+// Generar imágenes de flor en offscreen canvas
+const FLOR_IMGS = [];
+(function generarFlores(){
+  CF.forEach(cf => {
+    const sz = 96, oc = document.createElement('canvas');
+    oc.width = oc.height = sz;
+    const c = oc.getContext('2d');
+    const cx=sz/2, cy=sz/2, pr=sz*.36, cr=sz*.145;
+    // sombra suave debajo
+    c.save();
+    c.shadowColor='rgba(80,20,0,.35)';
+    c.shadowBlur=6; c.shadowOffsetY=4;
+    // pétalos capa trasera (8) — más anchos y con degradado 3 paradas
+    for (let capa=0;capa<2;capa++) {
+      for (let i=0;i<8;i++) {
+        const ang=(i/8)*PI2+(capa?Math.PI/8:0);
+        const px=cx+Math.cos(ang)*pr*.52;
+        const py=cy+Math.sin(ang)*pr*.52;
+        const gp=c.createRadialGradient(px,py,0,px,py,pr*.82);
+        gp.addColorStop(0, capa?cf.p1:cf.p2);
+        gp.addColorStop(.55, capa?cf.p2:cf.p3);
+        gp.addColorStop(1,'rgba(0,0,0,0)');
+        c.globalAlpha = capa ? .92 : .58;
+        c.fillStyle=gp;
+        c.beginPath();
+        c.ellipse(px,py, pr*.44,pr*.74, ang+Math.PI/2, 0,PI2);
+        c.fill();
+      }
+    }
+    c.restore();
+    // centro con textura
+    c.globalAlpha=1;
+    const gc=c.createRadialGradient(cx-cr*.25,cy-cr*.25,0, cx,cy,cr);
+    gc.addColorStop(0,'#B06030');
+    gc.addColorStop(.45,cf.c);
+    gc.addColorStop(1,'#1e0800');
+    c.fillStyle=gc; c.beginPath(); c.arc(cx,cy,cr,0,PI2); c.fill();
+    // puntitos centro
+    c.fillStyle='rgba(30,8,0,.5)';
+    for (let i=0;i<8;i++) {
+      const a=(i/8)*PI2, rr=cr*.65;
+      c.beginPath(); c.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,cr*.16,0,PI2); c.fill();
+    }
+    c.beginPath(); c.arc(cx,cy,cr*.18,0,PI2); c.fill();
+    // brillo pétalo superior
+    c.fillStyle='rgba(255,255,200,.28)';
+    c.beginPath(); c.arc(cx-cr*.4,cy-cr*.5, cr*.7, 0, PI2); c.fill();
+    FLOR_IMGS.push(oc);
+  });
+})();
 
-crearFondo();construirGalaxia();crearEstrellas();crearFlores();loop();
+// Las flores se distribuyen en 3 "capas" de radio para crear profundidad real
+let FLORES = [];
+function crearFlores() {
+  FLORES = [];
+  const RM = radioMax();
+  // 3 grupos de radios muy separados para dar profundidad 3D visible
+  const grupos = [
+    { count:5, rMin:RM*.12, rMax:RM*.30, szBase:28 },   // muy cerca del centro (pequeñas)
+    { count:6, rMin:RM*.40, rMax:RM*.62, szBase:38 },   // radio medio
+    { count:5, rMin:RM*.70, rMax:RM*.95, szBase:50 },   // periferia (grandes)
+  ];
+  let globalIdx = 0;
+  grupos.forEach(g => {
+    for (let i=0;i<g.count;i++) {
+      const r   = rnd(g.rMin, g.rMax);
+      const ang = (globalIdx / 16)*PI2 + rnd(0, .5);
+      // velocidad angular inversamente proporcional al radio (órbitas reales)
+      const velAng = (rnd(.004,.009) / (r/RM+.3)) * (Math.random()>.5?1:-1);
+      FLORES.push({
+        r, ang, velAng,
+        // flotación vertical prominente y única por flor
+        ampY:  rnd(.04,.10)*RM,
+        velY:  rnd(.25,.75),
+        faseY: rnd(0,PI2),
+        // rotación 3D propia (giro sobre sí misma)
+        rotAng: rnd(0,PI2),
+        rotVel: rnd(-.018,.018),
+        szBase: g.szBase + rnd(-6,6),
+        img:    FLOR_IMGS[globalIdx % FLOR_IMGS.length],
+        // fase de pulso de escala
+        fasePulso: rnd(0,PI2),
+      });
+      globalIdx++;
+    }
+  });
+}
 
-// INTERACCIÓN
-const entrada=document.getElementById('entrada');
-const ui=document.getElementById('ui');
-const btnVolver=document.getElementById('volver');
+function dibujarFlores(ar) {
+  // Ordenar por profundidad z para que las lejanas queden detrás
+  const conZ = FLORES.map(f => {
+    f.ang    += f.velAng;
+    f.rotAng += f.rotVel;
+    const wx = Math.cos(f.ang)*f.r;
+    const wy = Math.sin(t*f.velY+f.faseY)*f.ampY;
+    const wz = Math.sin(f.ang)*f.r;
+    const proj = proyectar(wx,wy,wz,ar);
+    return { f, ...proj, wz };
+  });
+  // Pintar de atrás hacia adelante (las más lejanas primero)
+  conZ.sort((a,b)=> a.sf - b.sf);
 
-function abrirGalaxia(){activa=true;cvs.classList.add('vis');setTimeout(()=>entrada.classList.add('ocultar'),60);setTimeout(()=>{entrada.style.display='none';ui.classList.add('vis');btnVolver.classList.add('vis');},1800);}
-function volverEntrada(){activa=false;entrada.style.display='';setTimeout(()=>entrada.classList.remove('ocultar'),20);cvs.classList.remove('vis');ui.classList.remove('vis');btnVolver.classList.remove('vis');ctx.clearRect(0,0,W,H);angRot=0;t=0;}
+  for (const {f,sx,sy,sf} of conZ) {
+    const pulso = 1 + Math.sin(t*1.1+f.fasePulso)*.1;
+    const s = f.szBase * sf * pulso;
+    if (s < 4) continue;
+    const alpha = Math.min(1, sf*1.9) * .94;
+    if (alpha < .05) continue;
+    ctx.save();
+    ctx.translate(sx, sy);
+    ctx.rotate(f.rotAng);
+    ctx.globalAlpha = alpha;
+    // sombra suave proyectada
+    ctx.shadowColor = 'rgba(200,100,0,.35)';
+    ctx.shadowBlur  = s * .3;
+    ctx.shadowOffsetX = s * .08;
+    ctx.shadowOffsetY = s * .12;
+    ctx.drawImage(f.img, -s/2, -s/2, s, s);
+    ctx.restore();
+  }
+  ctx.globalAlpha=1; ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
+}
 
-function bindBtn(el,fn){el.addEventListener('click',fn,{passive:true});el.addEventListener('touchend',e=>{e.preventDefault();fn();},{passive:false});}
-bindBtn(document.getElementById('florBtn'),abrirGalaxia);
-bindBtn(btnVolver,volverEntrada);
-document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+// ═══════════════════════════════════════════════════════
+//  8. LOOP PRINCIPAL
+// ═══════════════════════════════════════════════════════
+function loop() {
+  requestAnimationFrame(loop);
+  if (!activa) return;
+  t      += .011;
+  angRot += .007;
+
+  // trail para efecto de movimiento
+  ctx.fillStyle = 'rgba(0,0,0,.52)';
+  ctx.fillRect(0,0,W,H);
+
+  dibujarFondo();
+  dibujarAnillos(angRot);
+  dibujarEspirales(angRot);
+  dibujarGalaxia(angRot);
+  dibujarEstrellas(angRot);
+  dibujarFlores(angRot);
+  dibujarHalo(1 + Math.sin(t*1.5)*.07);
+
+  // actualizar visualizador si hay música
+  actualizarViz();
+}
+
+// ═══════════════════════════════════════════════════════
+//  9. MÚSICA AMBIENTAL — Web Audio API
+// ═══════════════════════════════════════════════════════
+let audioCtx = null, musicaActiva = false;
+let masterGain, analyser, analyserData;
+
+// Nodos activos para poder detenerlos
+let nodos = [];
+
+// Notas en Hz para escala pentatónica (Do mayor pentatónica)
+const NOTAS = [130.81, 146.83, 164.81, 196.00, 220.00,
+               261.63, 293.66, 329.63, 392.00, 440.00,
+               523.25, 587.33, 659.25];
+
+function crearAudioCtx() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0;
+
+  // Analyser para visualizador
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 128;
+  analyserData = new Uint8Array(analyser.frequencyBinCount);
+
+  masterGain.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+function crearTono(freq, tipo, volumen, inicio, duracion, vibrato=0) {
+  if (!audioCtx) return null;
+  const osc  = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = tipo;
+  osc.frequency.value = freq;
+
+  if (vibrato > 0) {
+    const lfo = audioCtx.createOscillator();
+    const lfoG = audioCtx.createGain();
+    lfo.frequency.value = 5.5;
+    lfoG.gain.value = vibrato;
+    lfo.connect(lfoG);
+    lfoG.connect(osc.frequency);
+    lfo.start(inicio);
+    lfo.stop(inicio + duracion + .1);
+    nodos.push(lfo, lfoG);
+  }
+
+  gain.gain.setValueAtTime(0, inicio);
+  gain.gain.linearRampToValueAtTime(volumen, inicio + .08);
+  gain.gain.setValueAtTime(volumen, inicio + duracion - .25);
+  gain.gain.linearRampToValueAtTime(0, inicio + duracion);
+
+  osc.connect(gain);
+  gain.connect(masterGain);
+  osc.start(inicio);
+  osc.stop(inicio + duracion + .05);
+  nodos.push(osc, gain);
+  return osc;
+}
+
+function crearPad(freq, inicio) {
+  // Pad cósmico: sine suave + una octava arriba muy tenue
+  crearTono(freq,       'sine',     .055, inicio, 4.5, 1.5);
+  crearTono(freq*2,     'sine',     .018, inicio, 4.5, 0);
+  crearTono(freq*1.005, 'sine',     .028, inicio+.06, 4.2, 1.2); // chorus ligero
+}
+
+function crearArpegio(inicio) {
+  // Arpegios de cuatro notas ascendentes
+  const base = NOTAS[Math.floor(Math.random()*6)];
+  [0,4,7,12].forEach((semi,i) => {
+    const fr = base * Math.pow(2, semi/12);
+    crearTono(fr, 'triangle', .028, inicio+i*.28, .6, 0.5);
+  });
+}
+
+function crearBajo(freq, inicio) {
+  crearTono(freq*.5, 'sine', .07, inicio, 3.8, 0);
+}
+
+// Secuenciador: programa eventos futuros
+let seqTimer = null;
+let seqT0 = 0;
+let seqStep = 0;
+
+const SEQ_PADS  = [0, 4, 7, 11, 4, 9]; // índices en NOTAS
+const SEQ_BAJOS = [0, 7, 4, 9];
+
+function secuenciador() {
+  if (!audioCtx || !musicaActiva) return;
+  const now = audioCtx.currentTime;
+  const compas = 3.6; // duración de cada paso en segundos
+
+  // Programar próximos 2 pasos
+  for (let i = 0; i < 2; i++) {
+    const tIni = seqT0 + (seqStep+i)*compas;
+    if (tIni < now - .05) continue;
+    const padFreq  = NOTAS[SEQ_PADS [seqStep % SEQ_PADS.length]];
+    const bajoFreq = NOTAS[SEQ_BAJOS[seqStep % SEQ_BAJOS.length]];
+    crearPad(padFreq, tIni);
+    crearBajo(bajoFreq, tIni);
+    if (seqStep % 2 === 0) crearArpegio(tIni + .9);
+  }
+  seqStep++;
+  seqTimer = setTimeout(secuenciador, compas*900);
+}
+
+function iniciarMusica() {
+  crearAudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  musicaActiva = true;
+  seqT0 = audioCtx.currentTime;
+  seqStep = 0;
+
+  // Fade in del master gain
+  masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+  masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+  masterGain.gain.linearRampToValueAtTime(.85, audioCtx.currentTime+2);
+
+  secuenciador();
+}
+
+function detenerMusica() {
+  musicaActiva = false;
+  if (seqTimer) { clearTimeout(seqTimer); seqTimer=null; }
+  if (masterGain) {
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime+1.2);
+  }
+  // Limpiar nodos viejos
+  setTimeout(()=>{ nodos=[]; },2000);
+}
+
+// ═══════════════════════════════════════════════════════
+//  10. VISUALIZADOR DE MÚSICA
+// ═══════════════════════════════════════════════════════
+const vizCvs = document.getElementById('vizCanvas');
+const vizCtx = vizCvs.getContext('2d');
+
+function resizeViz() {
+  vizCvs.width  = window.innerWidth;
+  vizCvs.height = 60;
+}
+resizeViz();
+window.addEventListener('resize', resizeViz);
+
+function actualizarViz() {
+  if (!analyser || !musicaActiva) return;
+  analyser.getByteFrequencyData(analyserData);
+  vizCtx.clearRect(0,0,vizCvs.width,60);
+  const bw = vizCvs.width / analyserData.length * 2.5;
+  for (let i=0;i<analyserData.length;i++) {
+    const v = analyserData[i]/255;
+    const bh = v*48;
+    const x = i * bw;
+    const g = vizCtx.createLinearGradient(x,60-bh,x,60);
+    g.addColorStop(0,'rgba(255,230,0,.8)');
+    g.addColorStop(1,'rgba(255,100,0,.3)');
+    vizCtx.fillStyle=g;
+    vizCtx.fillRect(x, 60-bh, bw*.8, bh);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  11. INICIALIZAR TODO
+// ═══════════════════════════════════════════════════════
+function init() {
+  crearFondo();
+  construirGalaxia();
+  crearEstrellas();
+  crearFlores();
+}
+init();
+loop();
+
+// ═══════════════════════════════════════════════════════
+//  12. INTERACCIÓN
+// ═══════════════════════════════════════════════════════
+const entrada    = document.getElementById('entrada');
+const ui         = document.getElementById('ui');
+const controles  = document.getElementById('controles');
+const btnMusica  = document.getElementById('btnMusica');
+const btnVolver  = document.getElementById('btnVolver');
+const vizEl      = document.getElementById('vizCanvas');
+
+function abrirGalaxia() {
+  activa = true;
+  cvs.classList.add('vis');
+  vizEl.classList.add('vis');
+  setTimeout(()=> entrada.classList.add('ocultar'), 50);
+  setTimeout(()=>{
+    entrada.style.display='none';
+    ui.classList.add('vis');
+    controles.classList.add('vis');
+    // Iniciar música automáticamente al abrir
+    iniciarMusica();
+    btnMusica.textContent = '🔇 Silenciar';
+  }, 1900);
+}
+
+function volverEntrada() {
+  activa = false;
+  detenerMusica();
+  entrada.style.display='';
+  setTimeout(()=> entrada.classList.remove('ocultar'), 20);
+  cvs.classList.remove('vis');
+  vizEl.classList.remove('vis');
+  ui.classList.remove('vis');
+  controles.classList.remove('vis');
+  ctx.clearRect(0,0,W,H);
+  angRot=0; t=0;
+  btnMusica.textContent = '🎵 Música';
+}
+
+btnMusica.addEventListener('click', ()=>{
+  if (musicaActiva) {
+    detenerMusica();
+    btnMusica.textContent = '🎵 Música';
+  } else {
+    iniciarMusica();
+    btnMusica.textContent = '🔇 Silenciar';
+  }
+});
+btnMusica.addEventListener('touchend', e=>{e.preventDefault(); btnMusica.click();},{passive:false});
+
+function bindBtn(el,fn){
+  el.addEventListener('click',fn,{passive:true});
+  el.addEventListener('touchend',e=>{e.preventDefault();fn();},{passive:false});
+}
+bindBtn(document.getElementById('florBtn'), abrirGalaxia);
+bindBtn(btnVolver, volverEntrada);
+
+document.addEventListener('touchmove', e=>e.preventDefault(),{passive:false});
 </script>
 </body>
 </html>
