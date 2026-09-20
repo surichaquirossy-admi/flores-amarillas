@@ -696,7 +696,7 @@ function loop() {
   requestAnimationFrame(loop);
   if (!activa) return;
   t      += .011;
-  angRot += .007;
+  angRot += 0.018; // vuelta completa cada ~350 frames (~6 segundos a 60fps)
 
   // trail para efecto de movimiento
   ctx.fillStyle = 'rgba(0,0,0,.52)';
