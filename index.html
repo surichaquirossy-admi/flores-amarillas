@@ -39,6 +39,23 @@
     .cbtn:active{background:rgba(255,200,0,.3);transform:scale(.95);}
     #vizCanvas{position:fixed;bottom:0;left:0;width:100%;height:60px;z-index:9;opacity:0;transition:opacity 1.5s ease 1.2s;pointer-events:none;}
     #vizCanvas.vis{opacity:1;}
+
+    /* ── ETIQUETAS FLORES (HTML sobre canvas) ── */
+    #etiquetas{position:fixed;inset:0;pointer-events:none;z-index:11;opacity:0;transition:opacity 2s ease 1s;}
+    #etiquetas.vis{opacity:1;}
+    .etiq{
+      position:absolute;
+      transform:translate(-50%,0);
+      font-family:Georgia,serif;
+      font-style:italic;
+      font-size:clamp(11px,2.5vw,15px);
+      color:#ffe650;
+      text-shadow:0 0 8px rgba(255,180,0,.9), 0 0 16px rgba(255,100,0,.6), 1px 1px 3px rgba(0,0,0,.95);
+      white-space:nowrap;
+      letter-spacing:1px;
+      pointer-events:none;
+      transition:opacity .1s;
+    }
     /* TARJETAS */
     #overlay-tarjeta{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .5s ease;}
     #overlay-tarjeta.vis{opacity:1;pointer-events:all;}
@@ -128,6 +145,8 @@
   &#127803; Activar musica de Floricienta?<br>
   <button id="btnActivarMusica">&#127925; Activar!</button>
 </div>
+
+<div id="etiquetas"></div>
 
 <div id="ui">
   <h1 class="ttl">Dia de las<br>Flores Amarillas</h1>
@@ -421,27 +440,60 @@ function dibujarFlores(ary,arx){
     ctx.drawImage(f.img,-s/2,-s/2,s,s);
     ctx.restore();
 
-    // ── etiqueta DEBAJO de la flor ──
-    var labelAlpha=Math.min(0.9, alpha*0.85);
-    if(labelAlpha<0.12)return;
-    var fontSize=Math.max(8, Math.round(sf*13));
-    ctx.save();
-    ctx.globalAlpha=labelAlpha;
-    ctx.font='italic '+fontSize+'px Georgia,serif';
-    ctx.textAlign='center';
-    // sombra del texto para que resalte sobre el fondo oscuro
-    ctx.shadowColor='rgba(0,0,0,.8)';
-    ctx.shadowBlur=4;
-    ctx.fillStyle='rgba(255,230,80,1)';
-    // posicion: debajo del centro de la flor
-    ctx.fillText(f.label, sx, sy + s/2 + fontSize + 2);
-    ctx.restore();
+    // (etiqueta manejada por HTML — ver actualizarEtiquetas)
   });
 
   ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
 }
 
-// ─── LOOP ───────────────────────────────────────────────────────
+// ─── ETIQUETAS HTML DEBAJO DE FLORES ───────────────────────────
+var etiqContainer = document.getElementById('etiquetas');
+var etiqEls = []; // divs reutilizables
+
+function iniciarEtiquetas(){
+  etiqContainer.innerHTML='';etiqEls=[];
+  for(var i=0;i<FLORES.length;i++){
+    var el=document.createElement('div');
+    el.className='etiq';
+    etiqContainer.appendChild(el);
+    etiqEls.push(el);
+  }
+}
+
+function actualizarEtiquetas(ary,arx){
+  // recalcular posicion de cada flor (sin mover angulos — ya se mueven en dibujarFlores)
+  for(var i=0;i<FLORES.length;i++){
+    var f=FLORES[i];
+    var wx=Math.cos(f.ang)*f.r;
+    var wy=Math.sin(t*f.velY+f.faseY)*f.ampY;
+    var wz=Math.sin(f.ang)*f.r;
+    var proj=proyectar(wx,wy,wz,ary,arx);
+    var sf=proj.sf;
+    var s=f.szBase*sf;
+    var el=etiqEls[i];
+    if(!el)continue;
+
+    // si la flor esta muy atras o fuera de pantalla, ocultar
+    if(sf<0.35 || s<5 || proj.sx<-60||proj.sx>W+60||proj.sy<-60||proj.sy>H+60){
+      el.style.opacity='0';continue;
+    }
+
+    // posicion: debajo de la flor
+    var posX = proj.sx;
+    var posY = proj.sy + s/2 + 4;
+
+    // tamanio de fuente segun perspectiva: entre 11px y 18px
+    var fs = Math.min(18, Math.max(11, Math.round(sf * 18)));
+    // opacidad segun profundidad
+    var op = Math.min(0.98, sf * 2.0);
+
+    el.style.left = posX + 'px';
+    el.style.top  = posY + 'px';
+    el.style.fontSize = fs + 'px';
+    el.style.opacity = op;
+    el.textContent = f.label;
+  }
+}
 var chispaTimer=0;
 function loop(){
   requestAnimationFrame(loop);
@@ -460,6 +512,7 @@ function loop(){
   dibujarEstrellas(angY,angX);
   dibujarFlores(angY,angX);
   dibujarHalo(1+Math.sin(t*1.5)*.07);
+  actualizarEtiquetas(angY,angX);
 
   // chispas: lanzar cada ~3 segundos
   chispaTimer++;
@@ -470,7 +523,7 @@ function loop(){
 }
 
 // ─── INIT ───────────────────────────────────────────────────────
-function init(){crearFondo();construirGalaxia();crearEstrellas();crearFlores();}
+function init(){crearFondo();construirGalaxia();crearEstrellas();crearFlores();iniciarEtiquetas();}
 init();loop();
 
 // ─── MUSICA ─────────────────────────────────────────────────────
@@ -537,12 +590,14 @@ var btnMusica=document.getElementById('btnMusica'),vizEl=document.getElementById
 
 function abrirGalaxia(){
   activa=true;cvs.classList.add('vis');vizEl.classList.add('vis');
+  document.getElementById('etiquetas').classList.add('vis');
   setTimeout(function(){entrada.classList.add('ocultar');},50);
   setTimeout(function(){entrada.style.display='none';ui.classList.add('vis');controles.classList.add('vis');iniciarMusica();iniciarTarjetas();},1900);
 }
 function volverEntrada(){
   activa=false;detenerMusica();detenerTarjetas();
   document.getElementById('notaMusica').style.display='none';
+  document.getElementById('etiquetas').classList.remove('vis');
   entrada.style.display='';setTimeout(function(){entrada.classList.remove('ocultar');},20);
   cvs.classList.remove('vis');vizEl.classList.remove('vis');
   ui.classList.remove('vis');controles.classList.remove('vis');
