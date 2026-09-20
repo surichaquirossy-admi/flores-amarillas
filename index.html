@@ -93,6 +93,21 @@
       transition:opacity 1.5s ease 1.2s;pointer-events:none;
     }
     #vizCanvas.vis{opacity:1;}
+
+    /* ── NOTA MÚSICA (primer toque) ── */
+    #notaMusica{
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+      z-index:30;background:rgba(0,0,0,.75);border:1px solid rgba(255,200,0,.5);
+      color:#ffd54f;padding:18px 30px;border-radius:16px;
+      font-size:1rem;letter-spacing:1px;text-align:center;line-height:1.7;
+      backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+      display:none;
+    }
+    #notaMusica button{
+      margin-top:14px;background:rgba(255,200,0,.2);border:1px solid rgba(255,200,0,.6);
+      color:#ffd54f;padding:9px 26px;border-radius:30px;font-size:.95rem;
+      cursor:pointer;letter-spacing:2px;
+    }
   </style>
 </head>
 <body>
@@ -175,10 +190,21 @@
   <p class="sub-entrada">Día de las Flores Amarillas</p>
 </div>
 
+<!-- AUDIO FLORICIENTA -->
+<audio id="audioFlor" loop preload="auto">
+  <source src="musica.mp3" type="audio/mpeg"/>
+</audio>
+
 <!-- CANVAS GALAXIA -->
 <canvas id="cvs"></canvas>
 <!-- VISUALIZADOR MÚSICA -->
 <canvas id="vizCanvas"></canvas>
+
+<!-- NOTA PARA PRIMER TOQUE EN MÓVIL -->
+<div id="notaMusica">
+  🌻 ¿Querés escuchar<br>la música de Floricienta?<br>
+  <button id="btnActivarMusica">🎵 ¡Sí, activar!</button>
+</div>
 
 <!-- UI GALAXIA -->
 <div id="ui">
@@ -614,140 +640,68 @@ function loop() {
 }
 
 // ═══════════════════════════════════════════════════════
-//  9. MÚSICA AMBIENTAL — Web Audio API
+//  9. MÚSICA — archivo musica.mp3 (Floricienta)
 // ═══════════════════════════════════════════════════════
-let audioCtx = null, musicaActiva = false;
-let masterGain, analyser, analyserData;
+const audio = document.getElementById('audioFlor');
+let musicaActiva = false;
+let analyser, analyserData, audioCtx, sourceNode;
 
-// Nodos activos para poder detenerlos
-let nodos = [];
-
-// Notas en Hz para escala pentatónica (Do mayor pentatónica)
-const NOTAS = [130.81, 146.83, 164.81, 196.00, 220.00,
-               261.63, 293.66, 329.63, 392.00, 440.00,
-               523.25, 587.33, 659.25];
-
-function crearAudioCtx() {
+// Conectar Web Audio API al elemento <audio> para el visualizador
+function conectarAnalyser() {
   if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0;
-
-  // Analyser para visualizador
-  analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 128;
-  analyserData = new Uint8Array(analyser.frequencyBinCount);
-
-  masterGain.connect(analyser);
-  analyser.connect(audioCtx.destination);
-}
-
-function crearTono(freq, tipo, volumen, inicio, duracion, vibrato=0) {
-  if (!audioCtx) return null;
-  const osc  = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-
-  osc.type = tipo;
-  osc.frequency.value = freq;
-
-  if (vibrato > 0) {
-    const lfo = audioCtx.createOscillator();
-    const lfoG = audioCtx.createGain();
-    lfo.frequency.value = 5.5;
-    lfoG.gain.value = vibrato;
-    lfo.connect(lfoG);
-    lfoG.connect(osc.frequency);
-    lfo.start(inicio);
-    lfo.stop(inicio + duracion + .1);
-    nodos.push(lfo, lfoG);
-  }
-
-  gain.gain.setValueAtTime(0, inicio);
-  gain.gain.linearRampToValueAtTime(volumen, inicio + .08);
-  gain.gain.setValueAtTime(volumen, inicio + duracion - .25);
-  gain.gain.linearRampToValueAtTime(0, inicio + duracion);
-
-  osc.connect(gain);
-  gain.connect(masterGain);
-  osc.start(inicio);
-  osc.stop(inicio + duracion + .05);
-  nodos.push(osc, gain);
-  return osc;
-}
-
-function crearPad(freq, inicio) {
-  // Pad cósmico: sine suave + una octava arriba muy tenue
-  crearTono(freq,       'sine',     .055, inicio, 4.5, 1.5);
-  crearTono(freq*2,     'sine',     .018, inicio, 4.5, 0);
-  crearTono(freq*1.005, 'sine',     .028, inicio+.06, 4.2, 1.2); // chorus ligero
-}
-
-function crearArpegio(inicio) {
-  // Arpegios de cuatro notas ascendentes
-  const base = NOTAS[Math.floor(Math.random()*6)];
-  [0,4,7,12].forEach((semi,i) => {
-    const fr = base * Math.pow(2, semi/12);
-    crearTono(fr, 'triangle', .028, inicio+i*.28, .6, 0.5);
-  });
-}
-
-function crearBajo(freq, inicio) {
-  crearTono(freq*.5, 'sine', .07, inicio, 3.8, 0);
-}
-
-// Secuenciador: programa eventos futuros
-let seqTimer = null;
-let seqT0 = 0;
-let seqStep = 0;
-
-const SEQ_PADS  = [0, 4, 7, 11, 4, 9]; // índices en NOTAS
-const SEQ_BAJOS = [0, 7, 4, 9];
-
-function secuenciador() {
-  if (!audioCtx || !musicaActiva) return;
-  const now = audioCtx.currentTime;
-  const compas = 3.6; // duración de cada paso en segundos
-
-  // Programar próximos 2 pasos
-  for (let i = 0; i < 2; i++) {
-    const tIni = seqT0 + (seqStep+i)*compas;
-    if (tIni < now - .05) continue;
-    const padFreq  = NOTAS[SEQ_PADS [seqStep % SEQ_PADS.length]];
-    const bajoFreq = NOTAS[SEQ_BAJOS[seqStep % SEQ_BAJOS.length]];
-    crearPad(padFreq, tIni);
-    crearBajo(bajoFreq, tIni);
-    if (seqStep % 2 === 0) crearArpegio(tIni + .9);
-  }
-  seqStep++;
-  seqTimer = setTimeout(secuenciador, compas*900);
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    sourceNode = audioCtx.createMediaElementSource(audio);
+    analyser   = audioCtx.createAnalyser();
+    analyser.fftSize = 128;
+    analyserData = new Uint8Array(analyser.frequencyBinCount);
+    sourceNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+  } catch(e) { /* fallback sin visualizador */ }
 }
 
 function iniciarMusica() {
-  crearAudioCtx();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  musicaActiva = true;
-  seqT0 = audioCtx.currentTime;
-  seqStep = 0;
-
-  // Fade in del master gain
-  masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-  masterGain.gain.linearRampToValueAtTime(.85, audioCtx.currentTime+2);
-
-  secuenciador();
+  conectarAnalyser();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  audio.volume = 0;
+  audio.play().then(() => {
+    musicaActiva = true;
+    // Fade in suave
+    let v = 0;
+    const fi = setInterval(() => {
+      v = Math.min(1, v + 0.04);
+      audio.volume = v;
+      if (v >= 1) clearInterval(fi);
+    }, 80);
+  }).catch(() => {
+    // Autoplay bloqueado — mostrar botón de activación
+    document.getElementById('notaMusica').style.display = 'block';
+  });
 }
 
 function detenerMusica() {
   musicaActiva = false;
-  if (seqTimer) { clearTimeout(seqTimer); seqTimer=null; }
-  if (masterGain) {
-    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime+1.2);
-  }
-  // Limpiar nodos viejos
-  setTimeout(()=>{ nodos=[]; },2000);
+  let v = audio.volume;
+  const fo = setInterval(() => {
+    v = Math.max(0, v - 0.05);
+    audio.volume = v;
+    if (v <= 0) { clearInterval(fo); audio.pause(); audio.currentTime = 0; }
+  }, 80);
 }
+
+// Botón de activación manual (para móviles que bloquean autoplay)
+document.getElementById('btnActivarMusica').addEventListener('click', () => {
+  document.getElementById('notaMusica').style.display = 'none';
+  conectarAnalyser();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  audio.volume = 1;
+  audio.play();
+  musicaActiva = true;
+});
+document.getElementById('btnActivarMusica').addEventListener('touchend', e => {
+  e.preventDefault();
+  document.getElementById('btnActivarMusica').click();
+}, { passive: false });
 
 // ═══════════════════════════════════════════════════════
 //  10. VISUALIZADOR DE MÚSICA
@@ -807,10 +761,10 @@ function abrirGalaxia() {
   vizEl.classList.add('vis');
   setTimeout(()=> entrada.classList.add('ocultar'), 50);
   setTimeout(()=>{
-    entrada.style.display='none';
+    entrada.style.display = 'none';
     ui.classList.add('vis');
     controles.classList.add('vis');
-    // Iniciar música automáticamente al abrir
+    // Intentar iniciar música automáticamente
     iniciarMusica();
     btnMusica.textContent = '🔇 Silenciar';
   }, 1900);
@@ -819,7 +773,8 @@ function abrirGalaxia() {
 function volverEntrada() {
   activa = false;
   detenerMusica();
-  entrada.style.display='';
+  document.getElementById('notaMusica').style.display = 'none';
+  entrada.style.display = '';
   setTimeout(()=> entrada.classList.remove('ocultar'), 20);
   cvs.classList.remove('vis');
   vizEl.classList.remove('vis');
@@ -839,7 +794,7 @@ btnMusica.addEventListener('click', ()=>{
     btnMusica.textContent = '🔇 Silenciar';
   }
 });
-btnMusica.addEventListener('touchend', e=>{e.preventDefault(); btnMusica.click();},{passive:false});
+btnMusica.addEventListener('touchend', e=>{ e.preventDefault(); btnMusica.click(); },{ passive:false });
 
 function bindBtn(el,fn){
   el.addEventListener('click',fn,{passive:true});
