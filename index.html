@@ -5,21 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="mobile-web-app-capable" content="yes"/>
-  <title>Día de las Flores Amarillas 🌻</title>
+  <title>Dia de las Flores Amarillas 🌻</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:Georgia,serif;touch-action:none;}
 
-    /* ── PANTALLA ENTRADA ── */
-    #entrada{
-      position:fixed;inset:0;
-      background:radial-gradient(ellipse at 50% 55%,#200a00 0%,#0d0400 50%,#000 100%);
+    #entrada{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 55%,#200a00 0%,#0d0400 50%,#000 100%);
       display:flex;flex-direction:column;align-items:center;justify-content:center;
-      z-index:20;transition:opacity 1.5s ease,transform 1.5s ease;
-    }
+      z-index:20;transition:opacity 1.5s ease,transform 1.5s ease;}
     #entrada.ocultar{opacity:0;transform:scale(1.3);pointer-events:none;}
 
-    /* partículas entrada */
     #ep{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
     .ep-dot{position:absolute;border-radius:50%;background:radial-gradient(circle,#ffdd00,transparent);
       animation:epf var(--d) ease-in-out infinite alternate;opacity:var(--o);}
@@ -32,27 +27,21 @@
     .ring:nth-child(3){width:230px;height:230px;animation-delay:1.6s;}
     @keyframes ring{0%{transform:scale(.4);opacity:.9;}100%{transform:scale(1.1);opacity:0;}}
 
-    #florBtn{
-      position:relative;z-index:2;cursor:pointer;
-      animation:idle 3.5s ease-in-out infinite;
+    #florBtn{position:relative;z-index:2;cursor:pointer;animation:idle 3.5s ease-in-out infinite;
       filter:drop-shadow(0 0 22px #ffaa00) drop-shadow(0 0 50px #ff5500);
-      -webkit-filter:drop-shadow(0 0 22px #ffaa00) drop-shadow(0 0 50px #ff5500);
-      transition:transform .15s;
-    }
+      -webkit-filter:drop-shadow(0 0 22px #ffaa00) drop-shadow(0 0 50px #ff5500);transition:transform .15s;}
     #florBtn:active{transform:scale(.88)!important;}
     @keyframes idle{0%,100%{transform:scale(1) rotate(0deg);}33%{transform:scale(1.1) rotate(8deg);}66%{transform:scale(1.06) rotate(-6deg);}}
 
-    .hint{margin-top:26px;color:#ffd54f;font-size:1.05rem;letter-spacing:3px;
-      text-transform:uppercase;text-shadow:0 0 12px #ffaa00;animation:blink 2s ease-in-out infinite;}
+    .hint{margin-top:26px;color:#ffd54f;font-size:1.05rem;letter-spacing:3px;text-transform:uppercase;
+      text-shadow:0 0 12px #ffaa00;animation:blink 2s ease-in-out infinite;}
     @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
-    .sub-entrada{margin-top:12px;color:rgba(255,245,200,.5);font-size:.8rem;
-      letter-spacing:5px;text-transform:uppercase;text-align:center;padding:0 30px;}
+    .sub-entrada{margin-top:12px;color:rgba(255,245,200,.5);font-size:.8rem;letter-spacing:5px;
+      text-transform:uppercase;text-align:center;padding:0 30px;}
 
-    /* ── CANVAS ── */
     #cvs{position:fixed;inset:0;display:block;opacity:0;transition:opacity 2s ease .2s;}
     #cvs.vis{opacity:1;}
 
-    /* ── UI GALAXIA ── */
     #ui{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
       padding-top:clamp(18px,5vw,40px);pointer-events:none;z-index:10;
       opacity:0;transition:opacity 2s ease .9s;}
@@ -68,111 +57,61 @@
     .sub{margin-top:10px;color:rgba(255,245,200,.6);font-size:clamp(.75rem,2vw,.95rem);
       letter-spacing:6px;text-transform:uppercase;text-align:center;}
 
-    /* ── CONTROLES ── */
-    #controles{
-      position:fixed;bottom:clamp(14px,4vw,26px);
-      left:50%;transform:translateX(-50%);
+    #controles{position:fixed;bottom:clamp(14px,4vw,26px);left:50%;transform:translateX(-50%);
       z-index:15;display:flex;gap:12px;align-items:center;
-      opacity:0;transition:opacity 2s ease 1.4s;pointer-events:all;
-    }
+      opacity:0;transition:opacity 2s ease 1.4s;pointer-events:all;}
     #controles.vis{opacity:1;}
 
-    .cbtn{
-      background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.4);
+    .cbtn{background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.4);
       color:#ffd54f;padding:9px 22px;border-radius:40px;font-size:.82rem;
       letter-spacing:2px;text-transform:uppercase;cursor:pointer;
       backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-      transition:background .25s,transform .1s;
-    }
+      transition:background .25s,transform .1s;}
     .cbtn:active{background:rgba(255,200,0,.3);transform:scale(.95);}
 
-    /* ── VISUALIZADOR MÚSICA ── */
-    #vizCanvas{
-      position:fixed;bottom:0;left:0;width:100%;
-      height:60px;z-index:9;opacity:0;
-      transition:opacity 1.5s ease 1.2s;pointer-events:none;
-    }
+    #vizCanvas{position:fixed;bottom:0;left:0;width:100%;height:60px;z-index:9;
+      opacity:0;transition:opacity 1.5s ease 1.2s;pointer-events:none;}
     #vizCanvas.vis{opacity:1;}
 
-    /* ── TARJETAS POÉTICAS ── */
-    #overlay-tarjeta{
-      position:fixed;inset:0;z-index:40;
+    /* ── TARJETAS ── */
+    #overlay-tarjeta{position:fixed;inset:0;z-index:40;
       display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,.55);
-      backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-      opacity:0;pointer-events:none;
-      transition:opacity .6s ease;
-    }
+      background:rgba(0,0,0,.6);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+      opacity:0;pointer-events:none;transition:opacity .5s ease;}
     #overlay-tarjeta.vis{opacity:1;pointer-events:all;}
 
-    .tarjeta-modal{
-      background:linear-gradient(160deg,#1c0800 0%,#2e1200 60%,#1a0600 100%);
-      border:1px solid rgba(255,185,0,.35);
-      border-radius:22px;
-      padding:0 0 28px 0;
-      width:min(88vw,380px);
-      box-shadow:0 0 40px rgba(255,150,0,.25), inset 0 0 30px rgba(255,120,0,.06);
-      overflow:hidden;
-      transform:scale(.85) translateY(30px);
-      transition:transform .5s cubic-bezier(.34,1.56,.64,1);
-      text-align:center;
-    }
+    .tarjeta-modal{background:linear-gradient(160deg,#1c0800 0%,#2e1200 60%,#1a0600 100%);
+      border:1px solid rgba(255,185,0,.35);border-radius:22px;padding:0 0 28px 0;
+      width:min(88vw,380px);overflow:hidden;text-align:center;
+      box-shadow:0 0 40px rgba(255,150,0,.25),inset 0 0 30px rgba(255,120,0,.06);
+      transform:scale(.82) translateY(40px);
+      transition:transform .5s cubic-bezier(.34,1.56,.64,1);}
     #overlay-tarjeta.vis .tarjeta-modal{transform:scale(1) translateY(0);}
 
-    /* imagen / ilustración del ramo */
-    .tarjeta-imagen{
-      width:100%;
-      height:200px;
-      display:flex;align-items:center;justify-content:center;
+    .tarjeta-imagen{width:100%;height:200px;display:flex;align-items:center;justify-content:center;
       background:radial-gradient(ellipse at 50% 80%,#3d1800 0%,#1a0800 70%,#000 100%);
-      position:relative;overflow:hidden;
-    }
-    .tarjeta-imagen svg{ filter:drop-shadow(0 8px 18px rgba(180,90,0,.6)); }
+      position:relative;overflow:hidden;}
+    .tarjeta-imagen svg{filter:drop-shadow(0 8px 18px rgba(180,90,0,.6));}
+    .tarjeta-imagen::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+      width:160px;height:60px;border-radius:50%;background:rgba(255,160,0,.18);filter:blur(18px);}
 
-    /* brillo difuso detrás del ramo */
-    .tarjeta-imagen::after{
-      content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
-      width:160px;height:60px;border-radius:50%;
-      background:rgba(255,160,0,.18);filter:blur(18px);
-    }
+    .tarjeta-titulo{margin:18px 24px 10px;font-size:1.5rem;color:#ffe680;
+      font-style:italic;text-shadow:0 0 12px rgba(255,200,0,.5);}
+    .tarjeta-msg{margin:0 26px 20px;color:rgba(255,235,180,.82);font-size:.92rem;line-height:1.8;}
+    .tarjeta-cerrar{display:inline-block;border:1px solid rgba(255,200,0,.45);
+      color:#ffd54f;background:rgba(255,200,0,.08);padding:9px 38px;border-radius:40px;
+      font-size:.88rem;letter-spacing:2px;cursor:pointer;transition:background .25s;}
+    .tarjeta-cerrar:active{background:rgba(255,200,0,.25);}
 
-    .tarjeta-titulo{
-      margin:18px 24px 10px;
-      font-size:1.5rem;
-      color:#ffe680;
-      font-style:italic;
-      text-shadow:0 0 12px rgba(255,200,0,.5);
-    }
-    .tarjeta-msg{
-      margin:0 26px 20px;
-      color:rgba(255,235,180,.8);
-      font-size:.92rem;
-      line-height:1.75;
-    }
-    .tarjeta-cerrar{
-      display:inline-block;
-      border:1px solid rgba(255,200,0,.45);
-      color:#ffd54f;background:rgba(255,200,0,.08);
-      padding:9px 38px;border-radius:40px;
-      font-size:.88rem;letter-spacing:2px;
-      cursor:pointer;transition:background .25s;
-    }
-    .tarjeta-cerrar:active,.tarjeta-cerrar:hover{background:rgba(255,200,0,.22);}
-
-    /* ── NOTA MÚSICA (primer toque) ── */
-    #notaMusica{
-      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-      z-index:30;background:rgba(0,0,0,.75);border:1px solid rgba(255,200,0,.5);
-      color:#ffd54f;padding:18px 30px;border-radius:16px;
-      font-size:1rem;letter-spacing:1px;text-align:center;line-height:1.7;
-      backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-      display:none;
-    }
-    #notaMusica button{
-      margin-top:14px;background:rgba(255,200,0,.2);border:1px solid rgba(255,200,0,.6);
-      color:#ffd54f;padding:9px 26px;border-radius:30px;font-size:.95rem;
-      cursor:pointer;letter-spacing:2px;
-    }
+    /* ── NOTA MUSICA ── */
+    #notaMusica{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+      z-index:50;background:rgba(0,0,0,.82);border:1px solid rgba(255,200,0,.5);
+      color:#ffd54f;padding:20px 30px;border-radius:16px;font-size:1rem;
+      letter-spacing:1px;text-align:center;line-height:1.8;
+      backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;}
+    #notaMusica button{margin-top:14px;background:rgba(255,200,0,.2);
+      border:1px solid rgba(255,200,0,.6);color:#ffd54f;padding:9px 26px;
+      border-radius:30px;font-size:.95rem;cursor:pointer;letter-spacing:2px;}
   </style>
 </head>
 <body>
@@ -185,25 +124,19 @@
     <svg id="florBtn" width="130" height="130" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="button" aria-label="Abrir galaxia">
       <defs>
         <radialGradient id="gP" cx="50%" cy="18%" r="82%">
-          <stop offset="0%" stop-color="#FFF0A0"/>
-          <stop offset="40%" stop-color="#FFD000"/>
-          <stop offset="100%" stop-color="#E06000"/>
+          <stop offset="0%" stop-color="#FFF0A0"/><stop offset="40%" stop-color="#FFD000"/><stop offset="100%" stop-color="#E06000"/>
         </radialGradient>
         <radialGradient id="gC" cx="40%" cy="35%" r="60%">
-          <stop offset="0%" stop-color="#A0571A"/>
-          <stop offset="55%" stop-color="#5D2E00"/>
-          <stop offset="100%" stop-color="#2A0E00"/>
+          <stop offset="0%" stop-color="#A0571A"/><stop offset="55%" stop-color="#5D2E00"/><stop offset="100%" stop-color="#2A0E00"/>
         </radialGradient>
         <radialGradient id="gBr" cx="38%" cy="32%" r="55%">
-          <stop offset="0%" stop-color="rgba(255,240,140,.5)"/>
-          <stop offset="100%" stop-color="rgba(255,200,0,0)"/>
+          <stop offset="0%" stop-color="rgba(255,240,140,.5)"/><stop offset="100%" stop-color="rgba(255,200,0,0)"/>
         </radialGradient>
         <filter id="fw" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="2.8" result="b"/>
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-      <!-- sombra pétalo trasero -->
       <g transform="translate(100,100)">
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(22.5) translate(1,3)"/>
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(67.5) translate(1,3)"/>
@@ -214,7 +147,6 @@
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(292.5) translate(1,3)"/>
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="#C06000" opacity=".35" transform="rotate(337.5) translate(1,3)"/>
       </g>
-      <!-- pétalos traseros -->
       <g transform="translate(100,100)" filter="url(#fw)">
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(0)"/>
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(45)"/>
@@ -225,7 +157,6 @@
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(270)"/>
         <ellipse cx="0" cy="-53" rx="16" ry="34" fill="url(#gP)" opacity=".7" transform="rotate(315)"/>
       </g>
-      <!-- pétalos frontales -->
       <g transform="translate(100,100)" filter="url(#fw)">
         <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(22.5)"/>
         <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(67.5)"/>
@@ -236,909 +167,336 @@
         <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(292.5)"/>
         <ellipse cx="0" cy="-58" rx="14.5" ry="37" fill="url(#gP)" transform="rotate(337.5)"/>
       </g>
-      <!-- centro -->
       <circle cx="100" cy="100" r="26" fill="url(#gC)" filter="url(#fw)"/>
       <circle cx="100" cy="100" r="20" fill="none" stroke="#8B4A00" stroke-width="1.5" stroke-dasharray="3 2" opacity=".8"/>
-      <!-- textura puntitos centro -->
       <g fill="#3a1200" opacity=".55" transform="translate(100,100)">
-        <circle cx="0"  cy="-12" r="1.8"/><circle cx="8"  cy="-9"  r="1.4"/>
-        <circle cx="12" cy="0"   r="1.8"/><circle cx="8"  cy="9"   r="1.4"/>
-        <circle cx="0"  cy="12"  r="1.8"/><circle cx="-8" cy="9"   r="1.4"/>
-        <circle cx="-12"cy="0"   r="1.8"/><circle cx="-8" cy="-9"  r="1.4"/>
-        <circle cx="0"  cy="0"   r="2.2"/>
+        <circle cx="0" cy="-12" r="1.8"/><circle cx="8" cy="-9" r="1.4"/>
+        <circle cx="12" cy="0" r="1.8"/><circle cx="8" cy="9" r="1.4"/>
+        <circle cx="0" cy="12" r="1.8"/><circle cx="-8" cy="9" r="1.4"/>
+        <circle cx="-12" cy="0" r="1.8"/><circle cx="-8" cy="-9" r="1.4"/>
+        <circle cx="0" cy="0" r="2.2"/>
       </g>
-      <!-- brillo centro -->
       <circle cx="100" cy="100" r="26" fill="url(#gBr)"/>
     </svg>
   </div>
-  <p class="hint">✨ Toca la flor ✨</p>
-  <p class="sub-entrada">Día de las Flores Amarillas</p>
+  <p class="hint">&#10024; Toca la flor &#10024;</p>
+  <p class="sub-entrada">Dia de las Flores Amarillas</p>
 </div>
 
-<!-- TARJETAS POÉTICAS -->
+<!-- TARJETAS POETICAS -->
 <div id="overlay-tarjeta">
   <div class="tarjeta-modal">
     <div class="tarjeta-imagen" id="tarjeta-svg-wrap"></div>
     <p class="tarjeta-titulo" id="tarjeta-titulo"></p>
-    <p class="tarjeta-msg"    id="tarjeta-msg"></p>
+    <p class="tarjeta-msg" id="tarjeta-msg"></p>
     <button class="tarjeta-cerrar" id="tarjeta-cerrar">Cerrar</button>
   </div>
 </div>
 
-<!-- AUDIO FLORICIENTA -->
+<!-- AUDIO -->
 <audio id="audioFlor" loop preload="auto">
   <source src="musica.mp3" type="audio/mpeg"/>
 </audio>
 
-<!-- CANVAS GALAXIA -->
+<!-- CANVAS -->
 <canvas id="cvs"></canvas>
-<!-- VISUALIZADOR MÚSICA -->
 <canvas id="vizCanvas"></canvas>
 
-<!-- NOTA PARA PRIMER TOQUE EN MÓVIL -->
+<!-- NOTA MUSICA MOVIL -->
 <div id="notaMusica">
-  🌻 ¿Querés escuchar<br>la música de Floricienta?<br>
-  <button id="btnActivarMusica">🎵 ¡Sí, activar!</button>
+  &#127803; Activar la musica de Floricienta?<br>
+  <button id="btnActivarMusica">&#127925; Activar!</button>
 </div>
 
-<!-- UI GALAXIA -->
+<!-- UI -->
 <div id="ui">
-  <h1 class="ttl">Día de las<br>Flores Amarillas</h1>
-  <p class="sub">✦ &nbsp;21 de Septiembre&nbsp; ✦</p>
+  <h1 class="ttl">Dia de las<br>Flores Amarillas</h1>
+  <p class="sub">&#10022; &nbsp;21 de Septiembre&nbsp; &#10022;</p>
 </div>
 
-<!-- CONTROLES -->
 <div id="controles">
-  <button class="cbtn" id="btnMusica">🎵 Música</button>
-  <button class="cbtn" id="btnVolver">← Volver</button>
+  <button class="cbtn" id="btnMusica">&#127925; Musica</button>
+  <button class="cbtn" id="btnVolver">&#8592; Volver</button>
 </div>
 
 <script>
 'use strict';
-// ═══════════════════════════════════════════════════════
-//  CONSTANTES Y HELPERS
-// ═══════════════════════════════════════════════════════
-const PI2 = Math.PI * 2;
-const rnd = (a,b) => Math.random()*(b-a)+a;
+var PI2=Math.PI*2;
+function rnd(a,b){return Math.random()*(b-a)+a;}
 
-// ═══════════════════════════════════════════════════════
-//  CANVAS PRINCIPAL
-// ═══════════════════════════════════════════════════════
-const cvs = document.getElementById('cvs');
-const ctx = cvs.getContext('2d');
-let W, H, CX, CY;
-
-function resize() {
-  W = window.innerWidth; H = window.innerHeight;
-  CX = W/2; CY = H/2;
-  cvs.width = W; cvs.height = H;
-}
+// CANVAS
+var cvs=document.getElementById('cvs');
+var ctx=cvs.getContext('2d');
+var W,H,CX,CY;
+function resize(){W=window.innerWidth;H=window.innerHeight;CX=W/2;CY=H/2;cvs.width=W;cvs.height=H;}
 resize();
-window.addEventListener('resize', () => { resize(); init(); });
+window.addEventListener('resize',function(){resize();init();});
 
-// ═══════════════════════════════════════════════════════
-//  PARTÍCULAS FONDO ENTRADA
-// ═══════════════════════════════════════════════════════
-const epEl = document.getElementById('ep');
-for (let i = 0; i < 55; i++) {
-  const d = document.createElement('div');
-  d.className = 'ep-dot';
-  const s = rnd(1,4);
-  d.style.cssText = `width:${s}px;height:${s}px;left:${rnd(0,100)}%;top:${rnd(0,100)}%;
-    --d:${rnd(3,7).toFixed(1)}s;--o:${rnd(.05,.35).toFixed(2)};
-    --tx:${rnd(-25,25).toFixed(0)}px;--ty:${rnd(-25,25).toFixed(0)}px;
-    --s:${rnd(.5,1.8).toFixed(2)};animation-delay:${rnd(0,5).toFixed(1)}s;`;
+var t=0,angRot=0,activa=false;
+
+// PARTICULAS ENTRADA
+var epEl=document.getElementById('ep');
+for(var i=0;i<55;i++){
+  var d=document.createElement('div');d.className='ep-dot';
+  var s=rnd(1,4);
+  d.style.cssText='width:'+s+'px;height:'+s+'px;left:'+rnd(0,100)+'%;top:'+rnd(0,100)+'%;--d:'+rnd(3,7).toFixed(1)+'s;--o:'+rnd(.05,.35).toFixed(2)+';--tx:'+rnd(-25,25).toFixed(0)+'px;--ty:'+rnd(-25,25).toFixed(0)+'px;--s:'+rnd(.5,1.8).toFixed(2)+';animation-delay:'+rnd(0,5).toFixed(1)+'s;';
   epEl.appendChild(d);
 }
 
-// ═══════════════════════════════════════════════════════
-//  ESTADO
-// ═══════════════════════════════════════════════════════
-let t = 0, angRot = 0, activa = false;
+// PROYECCION 3D
+var INCL=0.48;
+function proyectar(x0,y0,z0,ar){
+  var xr=x0*Math.cos(ar)+z0*Math.sin(ar);
+  var zr=-x0*Math.sin(ar)+z0*Math.cos(ar);
+  var yr=y0*Math.cos(INCL)-zr*Math.sin(INCL);
+  var zf=y0*Math.sin(INCL)+zr*Math.cos(INCL);
+  var fov=580,dist=fov+zf*0.3;
+  return{sx:CX+(xr*fov)/dist,sy:CY+(yr*fov)/dist,sf:fov/dist};
+}
+function radioMax(){return Math.min(W,H)*0.44;}
 
-// ═══════════════════════════════════════════════════════
-//  PROYECCIÓN 3D
-// ═══════════════════════════════════════════════════════
-const INCL = 0.48; // inclinación del disco
-function proyectar(x0, y0, z0, ar) {
-  // rotación en Y
-  const xr =  x0*Math.cos(ar) + z0*Math.sin(ar);
-  const zr = -x0*Math.sin(ar) + z0*Math.cos(ar);
-  // inclinación en X
-  const yr = y0*Math.cos(INCL) - zr*Math.sin(INCL);
-  const zf = y0*Math.sin(INCL) + zr*Math.cos(INCL);
-  // perspectiva
-  const fov = 580;
-  const dist = fov + zf * 0.3;
-  return { sx: CX + (xr*fov)/dist, sy: CY + (yr*fov)/dist, sf: fov/dist };
+// FONDO ESTELAR
+var FONDO=[];
+function crearFondo(){FONDO=[];for(var i=0;i<240;i++)FONDO.push({x:rnd(0,1),y:rnd(0,1),r:rnd(.3,1.8),br:rnd(.2,1),vel:rnd(.3,1.4),fase:rnd(0,PI2)});}
+function dibujarFondo(){for(var i=0;i<FONDO.length;i++){var s=FONDO[i];ctx.globalAlpha=s.br*(.4+.6*Math.sin(t*s.vel+s.fase));ctx.fillStyle='#fff9e0';ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,PI2);ctx.fill();}ctx.globalAlpha=1;}
+
+// GALAXIA ESPIRAL
+var PART=[];
+function construirGalaxia(){
+  PART=[];var RM=radioMax();var BRAZOS=3;var POR_BRAZO=650;
+  for(var b=0;b<BRAZOS;b++){var off=(b/BRAZOS)*PI2;for(var i=0;i<POR_BRAZO;i++){var frac=i/POR_BRAZO;var r=5+frac*RM;var ang=frac*Math.PI*5+off;PART.push({x0:Math.cos(ang)*r+rnd(-1,1)*r*.20,y0:rnd(-1,1)*(1-frac)*RM*.07,z0:Math.sin(ang)*r+rnd(-1,1)*r*.20,r:(1-frac)*2.6+rnd(.15,1.1),h:rnd(28,54),s:rnd(72,100),l:rnd(55,92),a:rnd(.35,.9)});}}
+  for(var i=0;i<350;i++){var r=rnd(0,RM),ang=rnd(0,PI2);PART.push({x0:Math.cos(ang)*r,y0:rnd(-1,1)*RM*.05,z0:Math.sin(ang)*r,r:rnd(.2,.9),h:rnd(32,58),s:rnd(55,85),l:rnd(58,82),a:rnd(.1,.35)});}
+}
+function dibujarGalaxia(ar){for(var i=0;i<PART.length;i++){var p=PART[i];var proj=proyectar(p.x0,p.y0,p.z0,ar);var sx=proj.sx,sy=proj.sy,sf=proj.sf;if(sx<-8||sx>W+8||sy<-8||sy>H+8)continue;ctx.globalAlpha=p.a*Math.min(1,sf*1.3);ctx.fillStyle='hsl('+p.h+','+p.s+'%,'+p.l+'%)';ctx.beginPath();ctx.arc(sx,sy,Math.max(.25,p.r*sf),0,PI2);ctx.fill();}ctx.globalAlpha=1;}
+
+// HALO
+function dibujarHalo(pulso){
+  var r1=Math.min(W,H)*.115*pulso,r2=Math.min(W,H)*.30*pulso;
+  var g=ctx.createRadialGradient(CX,CY,0,CX,CY,r1);g.addColorStop(0,'rgba(255,245,130,.98)');g.addColorStop(.3,'rgba(255,195,45,.70)');g.addColorStop(1,'rgba(255,110,0,0)');ctx.globalAlpha=1;ctx.fillStyle=g;ctx.beginPath();ctx.arc(CX,CY,r1,0,PI2);ctx.fill();
+  g=ctx.createRadialGradient(CX,CY,r1*.15,CX,CY,r2);g.addColorStop(0,'rgba(255,195,50,.28)');g.addColorStop(1,'rgba(255,90,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(CX,CY,r2,0,PI2);ctx.fill();
 }
 
-function radioMax() { return Math.min(W,H) * 0.44; }
-
-// ═══════════════════════════════════════════════════════
-//  1. FONDO ESTELAR
-// ═══════════════════════════════════════════════════════
-let FONDO = [];
-function crearFondo() {
-  FONDO = Array.from({length:240}, () => ({
-    x:rnd(0,1), y:rnd(0,1), r:rnd(.3,1.8),
-    br:rnd(.2,1), vel:rnd(.3,1.4), fase:rnd(0,PI2)
-  }));
-}
-function dibujarFondo() {
-  for (const s of FONDO) {
-    ctx.globalAlpha = s.br * (.4 + .6*Math.sin(t*s.vel+s.fase));
-    ctx.fillStyle = '#fff9e0';
-    ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r, 0, PI2); ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-}
-
-// ═══════════════════════════════════════════════════════
-//  2. PARTÍCULAS DE GALAXIA ESPIRAL
-// ═══════════════════════════════════════════════════════
-let PART = [];
-const BRAZOS = 3, POR_BRAZO = 650;
-
-function construirGalaxia() {
-  PART = [];
-  const RM = radioMax();
-  for (let b = 0; b < BRAZOS; b++) {
-    const off = (b/BRAZOS)*PI2;
-    for (let i = 0; i < POR_BRAZO; i++) {
-      const frac = i/POR_BRAZO;
-      const r = 5 + frac*RM;
-      const ang = frac*Math.PI*5 + off;
-      PART.push({
-        x0: Math.cos(ang)*r + rnd(-1,1)*r*.20,
-        y0: rnd(-1,1)*(1-frac)*RM*.07,
-        z0: Math.sin(ang)*r + rnd(-1,1)*r*.20,
-        r:  (1-frac)*2.6 + rnd(.15,1.1),
-        h:  rnd(28,54), s:rnd(72,100), l:rnd(55,92),
-        a:  rnd(.35,.9)
-      });
-    }
-  }
-  // polvo difuso
-  for (let i = 0; i < 350; i++) {
-    const r = rnd(0, RM), ang = rnd(0,PI2);
-    PART.push({
-      x0: Math.cos(ang)*r, y0: rnd(-1,1)*RM*.05, z0: Math.sin(ang)*r,
-      r:rnd(.2,.9), h:rnd(32,58), s:rnd(55,85), l:rnd(58,82), a:rnd(.1,.35)
-    });
+// ESPIRALES
+function dibujarEspirales(ar){
+  var RM=radioMax();var BRAZOS=3;
+  for(var b=0;b<BRAZOS;b++){
+    var off=(b/BRAZOS)*PI2;
+    ctx.lineWidth=1.2;ctx.beginPath();var first=true;
+    for(var i=0;i<=200;i++){var frac=i/200;var r=5+frac*RM;var ang=frac*Math.PI*5+off;var proj=proyectar(Math.cos(ang)*r,0,Math.sin(ang)*r,ar);if(first){ctx.moveTo(proj.sx,proj.sy);}else{ctx.lineTo(proj.sx,proj.sy);}first=false;}
+    ctx.strokeStyle='hsla('+(38+b*14)+',100%,65%,.22)';ctx.stroke();
+    ctx.lineWidth=.5;ctx.beginPath();first=true;
+    for(var i=0;i<=200;i++){var frac=i/200;var r=5+frac*RM;var ang=frac*Math.PI*5+off;var proj=proyectar(Math.cos(ang)*r,0,Math.sin(ang)*r,ar);if(first){ctx.moveTo(proj.sx,proj.sy);}else{ctx.lineTo(proj.sx,proj.sy);}first=false;}
+    ctx.strokeStyle='hsla('+(55+b*10)+',100%,85%,.12)';ctx.stroke();
   }
 }
 
-function dibujarGalaxia(ar) {
-  for (const p of PART) {
-    const {sx,sy,sf} = proyectar(p.x0, p.y0, p.z0, ar);
-    if (sx<-8||sx>W+8||sy<-8||sy>H+8) continue;
-    ctx.globalAlpha = p.a * Math.min(1, sf*1.3);
-    ctx.fillStyle = `hsl(${p.h},${p.s}%,${p.l}%)`;
-    ctx.beginPath(); ctx.arc(sx, sy, Math.max(.25, p.r*sf), 0, PI2); ctx.fill();
-  }
-  ctx.globalAlpha = 1;
+// ANILLOS
+function dibujarAnillos(ar){
+  var RM=radioMax();var fracs=[.28,.52,.78];var cols=['rgba(255,215,45,.13)','rgba(255,155,15,.11)','rgba(255,90,0,.09)'];
+  for(var fi=0;fi<fracs.length;fi++){var r=RM*fracs[fi];ctx.beginPath();for(var j=0;j<=110;j++){var ang=(j/110)*PI2;var proj=proyectar(Math.cos(ang)*r,0,Math.sin(ang)*r,ar);if(j===0){ctx.moveTo(proj.sx,proj.sy);}else{ctx.lineTo(proj.sx,proj.sy);}}ctx.strokeStyle=cols[fi];ctx.lineWidth=1;ctx.stroke();}
 }
 
-// ═══════════════════════════════════════════════════════
-//  3. ESPIRALES LUMINOSAS
-// ═══════════════════════════════════════════════════════
-function dibujarEspirales(ar) {
-  const RM = radioMax();
-  for (let b = 0; b < BRAZOS; b++) {
-    const off = (b/BRAZOS)*PI2;
-    // línea principal del brazo
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    let first = true;
-    for (let i = 0; i <= 200; i++) {
-      const frac = i/200;
-      const r = 5 + frac*RM;
-      const ang = frac*Math.PI*5 + off;
-      const {sx,sy} = proyectar(Math.cos(ang)*r, 0, Math.sin(ang)*r, ar);
-      first ? ctx.moveTo(sx,sy) : ctx.lineTo(sx,sy);
-      first = false;
-    }
-    ctx.strokeStyle = `hsla(${38+b*14},100%,65%,.22)`;
-    ctx.stroke();
-
-    // borde luminoso más fino
-    ctx.lineWidth = .5;
-    ctx.beginPath(); first = true;
-    for (let i = 0; i <= 200; i++) {
-      const frac = i/200;
-      const r = 5 + frac*RM;
-      const ang = frac*Math.PI*5 + off;
-      const {sx,sy} = proyectar(Math.cos(ang)*r, 0, Math.sin(ang)*r, ar);
-      first ? ctx.moveTo(sx,sy) : ctx.lineTo(sx,sy);
-      first = false;
-    }
-    ctx.strokeStyle = `hsla(${55+b*10},100%,85%,.12)`;
-    ctx.stroke();
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-//  4. ANILLOS ORBITALES
-// ═══════════════════════════════════════════════════════
-function dibujarAnillos(ar) {
-  const RM = radioMax();
-  [.28,.52,.78].forEach((frac,i) => {
-    const r = RM*frac, N = 110;
-    ctx.beginPath();
-    for (let j = 0; j <= N; j++) {
-      const ang = (j/N)*PI2;
-      const {sx,sy} = proyectar(Math.cos(ang)*r, 0, Math.sin(ang)*r, ar);
-      j===0 ? ctx.moveTo(sx,sy) : ctx.lineTo(sx,sy);
-    }
-    ctx.strokeStyle = ['rgba(255,215,45,.13)','rgba(255,155,15,.11)','rgba(255,90,0,.09)'][i];
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-//  5. HALO CENTRAL
-// ═══════════════════════════════════════════════════════
-function dibujarHalo(pulso) {
-  const r1 = Math.min(W,H)*.115*pulso;
-  const r2 = Math.min(W,H)*.30*pulso;
-  let g = ctx.createRadialGradient(CX,CY,0, CX,CY,r1);
-  g.addColorStop(0,   'rgba(255,245,130,.98)');
-  g.addColorStop(.3,  'rgba(255,195,45,.70)');
-  g.addColorStop(1,   'rgba(255,110,0,0)');
-  ctx.globalAlpha = 1; ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(CX,CY,r1,0,PI2); ctx.fill();
-  g = ctx.createRadialGradient(CX,CY, r1*.15, CX,CY, r2);
-  g.addColorStop(0, 'rgba(255,195,50,.28)');
-  g.addColorStop(1, 'rgba(255,90,0,0)');
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(CX,CY,r2,0,PI2); ctx.fill();
-}
-
-// ═══════════════════════════════════════════════════════
-//  6. ESTRELLAS DORADAS
-// ═══════════════════════════════════════════════════════
-let ESTRELLAS = [];
-function crearEstrellas() {
-  const RM = radioMax();
-  ESTRELLAS = Array.from({length:60}, () => {
-    const r = rnd(RM*.08, RM*.94);
-    return {
-      r, ang:rnd(0,PI2),
-      velAng: rnd(.003,.011)*(Math.random()>.5?1:-1),
-      ampY: rnd(.008,.042)*RM, velY:rnd(.35,1.3), faseY:rnd(0,PI2),
-      sz: rnd(2.2,7), faseBr:rnd(0,PI2), velBr:rnd(.7,2.6)
-    };
-  });
-}
-function estrella5(cx,cy,r1,r2,rot) {
-  ctx.beginPath();
-  for (let i=0;i<10;i++) {
-    const a = rot+(i/10)*PI2-Math.PI/2;
-    const rr = i%2===0?r1:r2;
-    i===0?ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr)
-         :ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);
-  }
-  ctx.closePath();
-}
-function dibujarEstrellas(ar) {
-  for (const s of ESTRELLAS) {
-    s.ang += s.velAng;
-    const wx = Math.cos(s.ang)*s.r;
-    const wy = Math.sin(t*s.velY+s.faseY)*s.ampY;
-    const wz = Math.sin(s.ang)*s.r;
-    const {sx,sy,sf} = proyectar(wx,wy,wz,ar);
-    const br = .5+.5*Math.sin(t*s.velBr+s.faseBr);
-    const sz = s.sz*sf*(0.75+.35*br);
-    if (sz<.4) continue;
-    // cruz destello
-    ctx.globalAlpha = br*.52; ctx.strokeStyle='#fffde0'; ctx.lineWidth=sz*.13;
-    ctx.beginPath();ctx.moveTo(sx-sz*2.8,sy);ctx.lineTo(sx+sz*2.8,sy);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(sx,sy-sz*2.8);ctx.lineTo(sx,sy+sz*2.8);ctx.stroke();
-    // diagonal destello
-    ctx.globalAlpha = br*.22;
-    ctx.beginPath();ctx.moveTo(sx-sz*1.8,sy-sz*1.8);ctx.lineTo(sx+sz*1.8,sy+sz*1.8);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(sx+sz*1.8,sy-sz*1.8);ctx.lineTo(sx-sz*1.8,sy+sz*1.8);ctx.stroke();
-    // cuerpo estrella
-    ctx.globalAlpha = .65+.35*br;
-    const gS = ctx.createRadialGradient(sx,sy,0,sx,sy,sz*1.5);
-    gS.addColorStop(0,'rgba(255,255,210,1)');
-    gS.addColorStop(.45,'rgba(255,215,55,.85)');
-    gS.addColorStop(1,'rgba(255,140,0,0)');
-    ctx.fillStyle = gS;
-    estrella5(sx,sy,sz*1.5,sz*.55, t*.38);
-    ctx.fill();
-  }
+// ESTRELLAS DORADAS
+var ESTRELLAS=[];
+function crearEstrellas(){ESTRELLAS=[];var RM=radioMax();for(var i=0;i<60;i++){var r=rnd(RM*.08,RM*.94);ESTRELLAS.push({r:r,ang:rnd(0,PI2),velAng:rnd(.003,.011)*(Math.random()>.5?1:-1),ampY:rnd(.008,.042)*RM,velY:rnd(.35,1.3),faseY:rnd(0,PI2),sz:rnd(2.2,7),faseBr:rnd(0,PI2),velBr:rnd(.7,2.6)});}}
+function estrella5(cx,cy,r1,r2,rot){ctx.beginPath();for(var i=0;i<10;i++){var a=rot+(i/10)*PI2-Math.PI/2;var rr=i%2===0?r1:r2;if(i===0){ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}else{ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}}ctx.closePath();}
+function dibujarEstrellas(ar){
+  for(var i=0;i<ESTRELLAS.length;i++){var s=ESTRELLAS[i];s.ang+=s.velAng;var proj=proyectar(Math.cos(s.ang)*s.r,Math.sin(t*s.velY+s.faseY)*s.ampY,Math.sin(s.ang)*s.r,ar);var sx=proj.sx,sy=proj.sy,sf=proj.sf;var br=.5+.5*Math.sin(t*s.velBr+s.faseBr);var sz=s.sz*sf*(0.75+.35*br);if(sz<.4)continue;
+    ctx.globalAlpha=br*.52;ctx.strokeStyle='#fffde0';ctx.lineWidth=sz*.13;ctx.beginPath();ctx.moveTo(sx-sz*2.8,sy);ctx.lineTo(sx+sz*2.8,sy);ctx.stroke();ctx.beginPath();ctx.moveTo(sx,sy-sz*2.8);ctx.lineTo(sx,sy+sz*2.8);ctx.stroke();
+    ctx.globalAlpha=br*.22;ctx.beginPath();ctx.moveTo(sx-sz*1.8,sy-sz*1.8);ctx.lineTo(sx+sz*1.8,sy+sz*1.8);ctx.stroke();ctx.beginPath();ctx.moveTo(sx+sz*1.8,sy-sz*1.8);ctx.lineTo(sx-sz*1.8,sy+sz*1.8);ctx.stroke();
+    ctx.globalAlpha=.65+.35*br;var gS=ctx.createRadialGradient(sx,sy,0,sx,sy,sz*1.5);gS.addColorStop(0,'rgba(255,255,210,1)');gS.addColorStop(.45,'rgba(255,215,55,.85)');gS.addColorStop(1,'rgba(255,140,0,0)');ctx.fillStyle=gS;estrella5(sx,sy,sz*1.5,sz*.55,t*.38);ctx.fill();}
   ctx.globalAlpha=1;
 }
 
-// ═══════════════════════════════════════════════════════
-//  7. FLORES ORBITANDO — bien separadas y flotando
-// ═══════════════════════════════════════════════════════
+// FLORES ORBITANDO
+var CF=[{p1:'#FFF5A0',p2:'#FFD000',p3:'#E06000',c:'#5D2E00'},{p1:'#FFEF70',p2:'#FFB300',p3:'#D05000',c:'#4a1f00'},{p1:'#FFFAC0',p2:'#FFE000',p3:'#CC8000',c:'#7B3F00'},{p1:'#FFE060',p2:'#FF9500',p3:'#C04000',c:'#3B1A00'},{p1:'#FFF080',p2:'#FFCC00',p3:'#E07000',c:'#5D4000'}];
+var FLOR_IMGS=[];
+(function(){CF.forEach(function(cf){var sz=96,oc=document.createElement('canvas');oc.width=oc.height=sz;var c=oc.getContext('2d'),cx=sz/2,cy=sz/2,pr=sz*.36,cr=sz*.145;c.save();c.shadowColor='rgba(80,20,0,.35)';c.shadowBlur=6;c.shadowOffsetY=4;for(var capa=0;capa<2;capa++){for(var i=0;i<8;i++){var ang=(i/8)*PI2+(capa?Math.PI/8:0);var px=cx+Math.cos(ang)*pr*.52,py=cy+Math.sin(ang)*pr*.52;var gp=c.createRadialGradient(px,py,0,px,py,pr*.82);gp.addColorStop(0,capa?cf.p1:cf.p2);gp.addColorStop(.55,capa?cf.p2:cf.p3);gp.addColorStop(1,'rgba(0,0,0,0)');c.globalAlpha=capa?.92:.58;c.fillStyle=gp;c.beginPath();c.ellipse(px,py,pr*.44,pr*.74,ang+Math.PI/2,0,PI2);c.fill();}}c.restore();c.globalAlpha=1;var gc=c.createRadialGradient(cx-cr*.25,cy-cr*.25,0,cx,cy,cr);gc.addColorStop(0,'#B06030');gc.addColorStop(.45,cf.c);gc.addColorStop(1,'#1e0800');c.fillStyle=gc;c.beginPath();c.arc(cx,cy,cr,0,PI2);c.fill();c.fillStyle='rgba(30,8,0,.5)';for(var i=0;i<8;i++){var a=(i/8)*PI2,rr=cr*.65;c.beginPath();c.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,cr*.16,0,PI2);c.fill();}c.beginPath();c.arc(cx,cy,cr*.18,0,PI2);c.fill();c.fillStyle='rgba(255,255,200,.28)';c.beginPath();c.arc(cx-cr*.4,cy-cr*.5,cr*.7,0,PI2);c.fill();FLOR_IMGS.push(oc);});})();
 
-// Variantes de color de flor
-const CF = [
-  {p1:'#FFF5A0',p2:'#FFD000',p3:'#E06000',c:'#5D2E00'},
-  {p1:'#FFEF70',p2:'#FFB300',p3:'#D05000',c:'#4a1f00'},
-  {p1:'#FFFAC0',p2:'#FFE000',p3:'#CC8000',c:'#7B3F00'},
-  {p1:'#FFE060',p2:'#FF9500',p3:'#C04000',c:'#3B1A00'},
-  {p1:'#FFF080',p2:'#FFCC00',p3:'#E07000',c:'#5D4000'},
-];
-
-// Generar imágenes de flor en offscreen canvas
-const FLOR_IMGS = [];
-(function generarFlores(){
-  CF.forEach(cf => {
-    const sz = 96, oc = document.createElement('canvas');
-    oc.width = oc.height = sz;
-    const c = oc.getContext('2d');
-    const cx=sz/2, cy=sz/2, pr=sz*.36, cr=sz*.145;
-    // sombra suave debajo
-    c.save();
-    c.shadowColor='rgba(80,20,0,.35)';
-    c.shadowBlur=6; c.shadowOffsetY=4;
-    // pétalos capa trasera (8) — más anchos y con degradado 3 paradas
-    for (let capa=0;capa<2;capa++) {
-      for (let i=0;i<8;i++) {
-        const ang=(i/8)*PI2+(capa?Math.PI/8:0);
-        const px=cx+Math.cos(ang)*pr*.52;
-        const py=cy+Math.sin(ang)*pr*.52;
-        const gp=c.createRadialGradient(px,py,0,px,py,pr*.82);
-        gp.addColorStop(0, capa?cf.p1:cf.p2);
-        gp.addColorStop(.55, capa?cf.p2:cf.p3);
-        gp.addColorStop(1,'rgba(0,0,0,0)');
-        c.globalAlpha = capa ? .92 : .58;
-        c.fillStyle=gp;
-        c.beginPath();
-        c.ellipse(px,py, pr*.44,pr*.74, ang+Math.PI/2, 0,PI2);
-        c.fill();
-      }
-    }
-    c.restore();
-    // centro con textura
-    c.globalAlpha=1;
-    const gc=c.createRadialGradient(cx-cr*.25,cy-cr*.25,0, cx,cy,cr);
-    gc.addColorStop(0,'#B06030');
-    gc.addColorStop(.45,cf.c);
-    gc.addColorStop(1,'#1e0800');
-    c.fillStyle=gc; c.beginPath(); c.arc(cx,cy,cr,0,PI2); c.fill();
-    // puntitos centro
-    c.fillStyle='rgba(30,8,0,.5)';
-    for (let i=0;i<8;i++) {
-      const a=(i/8)*PI2, rr=cr*.65;
-      c.beginPath(); c.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,cr*.16,0,PI2); c.fill();
-    }
-    c.beginPath(); c.arc(cx,cy,cr*.18,0,PI2); c.fill();
-    // brillo pétalo superior
-    c.fillStyle='rgba(255,255,200,.28)';
-    c.beginPath(); c.arc(cx-cr*.4,cy-cr*.5, cr*.7, 0, PI2); c.fill();
-    FLOR_IMGS.push(oc);
-  });
-})();
-
-// Las flores se distribuyen en 3 "capas" de radio para crear profundidad real
-let FLORES = [];
-function crearFlores() {
-  FLORES = [];
-  const RM = radioMax();
-  // 3 grupos de radios muy separados para dar profundidad 3D visible
-  const grupos = [
-    { count:5, rMin:RM*.12, rMax:RM*.30, szBase:28 },   // muy cerca del centro (pequeñas)
-    { count:6, rMin:RM*.40, rMax:RM*.62, szBase:38 },   // radio medio
-    { count:5, rMin:RM*.70, rMax:RM*.95, szBase:50 },   // periferia (grandes)
-  ];
-  let globalIdx = 0;
-  grupos.forEach(g => {
-    for (let i=0;i<g.count;i++) {
-      const r   = rnd(g.rMin, g.rMax);
-      const ang = (globalIdx / 16)*PI2 + rnd(0, .5);
-      // velocidad angular inversamente proporcional al radio (órbitas reales)
-      const velAng = (rnd(.004,.009) / (r/RM+.3)) * (Math.random()>.5?1:-1);
-      FLORES.push({
-        r, ang, velAng,
-        // flotación vertical prominente y única por flor
-        ampY:  rnd(.04,.10)*RM,
-        velY:  rnd(.25,.75),
-        faseY: rnd(0,PI2),
-        // rotación 3D propia (giro sobre sí misma)
-        rotAng: rnd(0,PI2),
-        rotVel: rnd(-.018,.018),
-        szBase: g.szBase + rnd(-6,6),
-        img:    FLOR_IMGS[globalIdx % FLOR_IMGS.length],
-        // fase de pulso de escala
-        fasePulso: rnd(0,PI2),
-      });
-      globalIdx++;
-    }
-  });
+var FLORES=[];
+function crearFlores(){
+  FLORES=[];var RM=radioMax();
+  var grupos=[{count:5,rMin:RM*.12,rMax:RM*.30,szBase:28},{count:6,rMin:RM*.40,rMax:RM*.62,szBase:38},{count:5,rMin:RM*.70,rMax:RM*.95,szBase:50}];
+  var gi=0;
+  grupos.forEach(function(g){for(var i=0;i<g.count;i++){var r=rnd(g.rMin,g.rMax);var ang=(gi/16)*PI2+rnd(0,.5);var velAng=(rnd(.004,.009)/(r/RM+.3))*(Math.random()>.5?1:-1);FLORES.push({r:r,ang:ang,velAng:velAng,ampY:rnd(.04,.10)*RM,velY:rnd(.25,.75),faseY:rnd(0,PI2),rotAng:rnd(0,PI2),rotVel:rnd(-.018,.018),szBase:g.szBase+rnd(-6,6),img:FLOR_IMGS[gi%FLOR_IMGS.length],fasePulso:rnd(0,PI2)});gi++;}});
+}
+function dibujarFlores(ar){
+  var conZ=FLORES.map(function(f){f.ang+=f.velAng;f.rotAng+=f.rotVel;var wx=Math.cos(f.ang)*f.r,wy=Math.sin(t*f.velY+f.faseY)*f.ampY,wz=Math.sin(f.ang)*f.r;var proj=proyectar(wx,wy,wz,ar);return{f:f,sx:proj.sx,sy:proj.sy,sf:proj.sf};});
+  conZ.sort(function(a,b){return a.sf-b.sf;});
+  conZ.forEach(function(item){var f=item.f,sx=item.sx,sy=item.sy,sf=item.sf;var pulso=1+Math.sin(t*1.1+f.fasePulso)*.1;var s=f.szBase*sf*pulso;if(s<4)return;var alpha=Math.min(1,sf*1.9)*.94;if(alpha<.05)return;ctx.save();ctx.translate(sx,sy);ctx.rotate(f.rotAng);ctx.globalAlpha=alpha;ctx.shadowColor='rgba(200,100,0,.35)';ctx.shadowBlur=s*.3;ctx.shadowOffsetX=s*.08;ctx.shadowOffsetY=s*.12;ctx.drawImage(f.img,-s/2,-s/2,s,s);ctx.restore();});
+  ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
 }
 
-function dibujarFlores(ar) {
-  // Ordenar por profundidad z para que las lejanas queden detrás
-  const conZ = FLORES.map(f => {
-    f.ang    += f.velAng;
-    f.rotAng += f.rotVel;
-    const wx = Math.cos(f.ang)*f.r;
-    const wy = Math.sin(t*f.velY+f.faseY)*f.ampY;
-    const wz = Math.sin(f.ang)*f.r;
-    const proj = proyectar(wx,wy,wz,ar);
-    return { f, ...proj, wz };
-  });
-  // Pintar de atrás hacia adelante (las más lejanas primero)
-  conZ.sort((a,b)=> a.sf - b.sf);
-
-  for (const {f,sx,sy,sf} of conZ) {
-    const pulso = 1 + Math.sin(t*1.1+f.fasePulso)*.1;
-    const s = f.szBase * sf * pulso;
-    if (s < 4) continue;
-    const alpha = Math.min(1, sf*1.9) * .94;
-    if (alpha < .05) continue;
-    ctx.save();
-    ctx.translate(sx, sy);
-    ctx.rotate(f.rotAng);
-    ctx.globalAlpha = alpha;
-    // sombra suave proyectada
-    ctx.shadowColor = 'rgba(200,100,0,.35)';
-    ctx.shadowBlur  = s * .3;
-    ctx.shadowOffsetX = s * .08;
-    ctx.shadowOffsetY = s * .12;
-    ctx.drawImage(f.img, -s/2, -s/2, s, s);
-    ctx.restore();
-  }
-  ctx.globalAlpha=1; ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
-}
-
-// ═══════════════════════════════════════════════════════
-//  8. LOOP PRINCIPAL
-// ═══════════════════════════════════════════════════════
-function loop() {
+// LOOP
+function loop(){
   requestAnimationFrame(loop);
-  if (!activa) return;
-  t      += .011;
-  angRot += 0.018; // vuelta completa cada ~350 frames (~6 segundos a 60fps)
-
-  // trail para efecto de movimiento
-  ctx.fillStyle = 'rgba(0,0,0,.52)';
-  ctx.fillRect(0,0,W,H);
-
-  dibujarFondo();
-  dibujarAnillos(angRot);
-  dibujarEspirales(angRot);
-  dibujarGalaxia(angRot);
-  dibujarEstrellas(angRot);
-  dibujarFlores(angRot);
-  dibujarHalo(1 + Math.sin(t*1.5)*.07);
-
-  // actualizar visualizador si hay música
+  if(!activa)return;
+  t+=.011;
+  angRot+=0.018;
+  ctx.fillStyle='rgba(0,0,0,.52)';ctx.fillRect(0,0,W,H);
+  dibujarFondo();dibujarAnillos(angRot);dibujarEspirales(angRot);
+  dibujarGalaxia(angRot);dibujarEstrellas(angRot);dibujarFlores(angRot);
+  dibujarHalo(1+Math.sin(t*1.5)*.07);
   actualizarViz();
 }
 
-// ═══════════════════════════════════════════════════════
-//  9. MÚSICA — archivo musica.mp3 (Floricienta)
-// ═══════════════════════════════════════════════════════
-const audio = document.getElementById('audioFlor');
-let musicaActiva = false;
-let analyser, analyserData, audioCtx, sourceNode;
+// INIT
+function init(){crearFondo();construirGalaxia();crearEstrellas();crearFlores();}
+init();loop();
 
-// Conectar Web Audio API al elemento <audio> para el visualizador
-function conectarAnalyser() {
-  if (audioCtx) return;
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    sourceNode = audioCtx.createMediaElementSource(audio);
-    analyser   = audioCtx.createAnalyser();
-    analyser.fftSize = 128;
-    analyserData = new Uint8Array(analyser.frequencyBinCount);
-    sourceNode.connect(analyser);
-    analyser.connect(audioCtx.destination);
-  } catch(e) { /* fallback sin visualizador */ }
+// MUSICA
+var audio=document.getElementById('audioFlor');
+var musicaActiva=false;
+var analyser=null,analyserData=null,audioCtx2=null,sourceNode=null;
+
+function conectarAnalyser(){
+  if(audioCtx2)return;
+  try{audioCtx2=new(window.AudioContext||window.webkitAudioContext)();sourceNode=audioCtx2.createMediaElementSource(audio);analyser=audioCtx2.createAnalyser();analyser.fftSize=128;analyserData=new Uint8Array(analyser.frequencyBinCount);sourceNode.connect(analyser);analyser.connect(audioCtx2.destination);}catch(e){}
 }
 
-function iniciarMusica() {
+function iniciarMusica(){
   conectarAnalyser();
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  audio.volume = 0;
-  audio.play().then(() => {
-    musicaActiva = true;
-    // Fade in suave
-    let v = 0;
-    const fi = setInterval(() => {
-      v = Math.min(1, v + 0.04);
-      audio.volume = v;
-      if (v >= 1) clearInterval(fi);
-    }, 80);
-  }).catch(() => {
-    // Autoplay bloqueado — mostrar botón de activación
-    document.getElementById('notaMusica').style.display = 'block';
-  });
+  if(audioCtx2&&audioCtx2.state==='suspended')audioCtx2.resume();
+  audio.volume=0;
+  audio.play().then(function(){
+    musicaActiva=true;
+    var v=0;var fi=setInterval(function(){v=Math.min(1,v+0.04);audio.volume=v;if(v>=1)clearInterval(fi);},80);
+    document.getElementById('btnMusica').textContent='&#128263; Silenciar';
+  }).catch(function(){document.getElementById('notaMusica').style.display='block';});
 }
 
-function detenerMusica() {
-  musicaActiva = false;
-  let v = audio.volume;
-  const fo = setInterval(() => {
-    v = Math.max(0, v - 0.05);
-    audio.volume = v;
-    if (v <= 0) { clearInterval(fo); audio.pause(); audio.currentTime = 0; }
-  }, 80);
+function detenerMusica(){
+  musicaActiva=false;
+  var v=audio.volume;
+  var fo=setInterval(function(){v=Math.max(0,v-0.05);audio.volume=v;if(v<=0){clearInterval(fo);audio.pause();audio.currentTime=0;}},80);
+  document.getElementById('btnMusica').textContent='&#127925; Musica';
 }
 
-// Botón de activación manual (para móviles que bloquean autoplay)
-document.getElementById('btnActivarMusica').addEventListener('click', () => {
-  document.getElementById('notaMusica').style.display = 'none';
-  conectarAnalyser();
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  audio.volume = 1;
-  audio.play();
-  musicaActiva = true;
+document.getElementById('btnActivarMusica').addEventListener('click',function(){
+  document.getElementById('notaMusica').style.display='none';
+  conectarAnalyser();if(audioCtx2&&audioCtx2.state==='suspended')audioCtx2.resume();
+  audio.volume=1;audio.play();musicaActiva=true;
+  document.getElementById('btnMusica').textContent='&#128263; Silenciar';
 });
-document.getElementById('btnActivarMusica').addEventListener('touchend', e => {
-  e.preventDefault();
-  document.getElementById('btnActivarMusica').click();
-}, { passive: false });
 
-// ═══════════════════════════════════════════════════════
-//  10. VISUALIZADOR DE MÚSICA
-// ═══════════════════════════════════════════════════════
-const vizCvs = document.getElementById('vizCanvas');
-const vizCtx = vizCvs.getContext('2d');
-
-function resizeViz() {
-  vizCvs.width  = window.innerWidth;
-  vizCvs.height = 60;
-}
-resizeViz();
-window.addEventListener('resize', resizeViz);
-
-function actualizarViz() {
-  if (!analyser || !musicaActiva) return;
+// VISUALIZADOR
+var vizCvs=document.getElementById('vizCanvas');
+var vizCtx=vizCvs.getContext('2d');
+function resizeViz(){vizCvs.width=window.innerWidth;vizCvs.height=60;}
+resizeViz();window.addEventListener('resize',resizeViz);
+function actualizarViz(){
+  if(!analyser||!musicaActiva)return;
   analyser.getByteFrequencyData(analyserData);
   vizCtx.clearRect(0,0,vizCvs.width,60);
-  const bw = vizCvs.width / analyserData.length * 2.5;
-  for (let i=0;i<analyserData.length;i++) {
-    const v = analyserData[i]/255;
-    const bh = v*48;
-    const x = i * bw;
-    const g = vizCtx.createLinearGradient(x,60-bh,x,60);
-    g.addColorStop(0,'rgba(255,230,0,.8)');
-    g.addColorStop(1,'rgba(255,100,0,.3)');
-    vizCtx.fillStyle=g;
-    vizCtx.fillRect(x, 60-bh, bw*.8, bh);
-  }
+  var bw=vizCvs.width/analyserData.length*2.5;
+  for(var i=0;i<analyserData.length;i++){var v=analyserData[i]/255,bh=v*48,x=i*bw;var g=vizCtx.createLinearGradient(x,60-bh,x,60);g.addColorStop(0,'rgba(255,230,0,.8)');g.addColorStop(1,'rgba(255,100,0,.3)');vizCtx.fillStyle=g;vizCtx.fillRect(x,60-bh,bw*.8,bh);}
 }
 
-// ═══════════════════════════════════════════════════════
-//  11. INICIALIZAR TODO
-// ═══════════════════════════════════════════════════════
-function init() {
-  crearFondo();
-  construirGalaxia();
-  crearEstrellas();
-  crearFlores();
+// ── TARJETAS POETICAS ──
+var SVG_GIRASOLES='<svg width="180" height="190" viewBox="0 0 180 190" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="tgP" cx="50%" cy="20%" r="80%"><stop offset="0%" stop-color="#FFE234"/><stop offset="55%" stop-color="#FFC200"/><stop offset="100%" stop-color="#E06000"/></radialGradient><radialGradient id="tgC" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#8B4513"/><stop offset="60%" stop-color="#5D2E00"/><stop offset="100%" stop-color="#2A0E00"/></radialGradient><filter id="tfw"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g stroke="#2d6a2d" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".85"><path d="M90 165 Q85 140 75 115"/><path d="M90 165 Q92 138 90 108"/><path d="M90 165 Q96 142 108 118"/><path d="M90 165 Q78 148 62 128"/><path d="M90 165 Q100 150 118 132"/></g><ellipse cx="90" cy="166" rx="14" ry="7" fill="#b8860b" opacity=".9"/><path d="M78 162 Q84 170 90 166 Q96 162 102 168" stroke="#daa520" stroke-width="2" fill="none"/><ellipse cx="70" cy="138" rx="12" ry="6" fill="#2d7a2d" opacity=".7" transform="rotate(-30 70 138)"/><ellipse cx="112" cy="142" rx="12" ry="6" fill="#2d7a2d" opacity=".7" transform="rotate(25 112 142)"/><g transform="translate(90,80)" filter="url(#tfw)"><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(0)"/><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(45)"/><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(90)"/><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(135)"/><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(180)"/><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(225)"/><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(270)"/><ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(315)"/></g><circle cx="90" cy="80" r="18" fill="url(#tgC)" filter="url(#tfw)"/><g transform="translate(58,100)" filter="url(#tfw)" opacity=".9"><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(0)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(60)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(120)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(180)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(240)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(300)"/></g><circle cx="58" cy="100" r="13" fill="url(#tgC)" filter="url(#tfw)"/><g transform="translate(122,104)" filter="url(#tfw)" opacity=".9"><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(0)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(60)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(120)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(180)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(240)"/><ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(300)"/></g><circle cx="122" cy="104" r="13" fill="url(#tgC)" filter="url(#tfw)"/></svg>';
+
+var SVG_ROSAS='<svg width="180" height="190" viewBox="0 0 180 190" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="rgP" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#FFF0A0"/><stop offset="50%" stop-color="#FFD000"/><stop offset="100%" stop-color="#C86000"/></radialGradient><radialGradient id="rgC" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#FFE060"/><stop offset="100%" stop-color="#CC8000"/></radialGradient><filter id="rfw"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g stroke="#2d6a2d" stroke-width="3" stroke-linecap="round" fill="none" opacity=".85"><path d="M90 168 Q86 145 78 118"/><path d="M90 168 Q91 142 90 112"/><path d="M90 168 Q95 144 105 120"/><path d="M90 168 Q80 150 65 132"/><path d="M90 168 Q98 148 115 135"/></g><ellipse cx="90" cy="168" rx="13" ry="6" fill="#b8860b" opacity=".9"/><path d="M79 164 Q85 172 90 168 Q95 164 101 170" stroke="#daa520" stroke-width="2" fill="none"/><ellipse cx="72" cy="140" rx="11" ry="5" fill="#2d7a2d" opacity=".7" transform="rotate(-28 72 140)"/><ellipse cx="110" cy="143" rx="11" ry="5" fill="#2d7a2d" opacity=".7" transform="rotate(22 110 143)"/><g transform="translate(90,82)" filter="url(#rfw)"><ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(0)" opacity=".95"/><ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(51)" opacity=".9"/><ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(102)" opacity=".85"/><ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(153)" opacity=".85"/><ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(204)" opacity=".9"/><ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(255)" opacity=".9"/><ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(306)" opacity=".95"/><ellipse cx="0" cy="-10" rx="9" ry="6" fill="url(#rgC)" transform="rotate(25)" opacity="1"/><ellipse cx="0" cy="-10" rx="9" ry="6" fill="url(#rgC)" transform="rotate(85)" opacity="1"/><ellipse cx="0" cy="-10" rx="9" ry="6" fill="url(#rgC)" transform="rotate(145)" opacity="1"/><ellipse cx="0" cy="-10" rx="9" ry="6" fill="url(#rgC)" transform="rotate(205)" opacity="1"/><ellipse cx="0" cy="-10" rx="9" ry="6" fill="url(#rgC)" transform="rotate(265)" opacity="1"/><circle cx="0" cy="0" r="7" fill="#FFD700"/></g><g transform="translate(60,103)" filter="url(#rfw)" opacity=".92"><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(0)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(60)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(120)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(180)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(240)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(300)"/><ellipse cx="0" cy="-8" rx="7" ry="5" fill="url(#rgC)" transform="rotate(30)"/><ellipse cx="0" cy="-8" rx="7" ry="5" fill="url(#rgC)" transform="rotate(150)"/><ellipse cx="0" cy="-8" rx="7" ry="5" fill="url(#rgC)" transform="rotate(270)"/><circle cx="0" cy="0" r="5" fill="#FFD700"/></g><g transform="translate(120,105)" filter="url(#rfw)" opacity=".92"><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(0)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(60)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(120)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(180)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(240)"/><ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(300)"/><ellipse cx="0" cy="-8" rx="7" ry="5" fill="url(#rgC)" transform="rotate(30)"/><ellipse cx="0" cy="-8" rx="7" ry="5" fill="url(#rgC)" transform="rotate(150)"/><ellipse cx="0" cy="-8" rx="7" ry="5" fill="url(#rgC)" transform="rotate(270)"/><circle cx="0" cy="0" r="5" fill="#FFD700"/></g></svg>';
+
+var TARJETAS=[
+  {svg:SVG_GIRASOLES, titulo:'Tu risa', msg:'Hay risas que iluminan un cuarto entero.<br>La tuya es una de esas.<br>La escucho y se me olvida todo lo demas.'},
+  {svg:SVG_ROSAS, titulo:'Petalos dorados', msg:'Cada petalo de esta flor es un gracias distinto:<br>por tu paciencia, tu carino,<br>y por dejarme quererte como quiero.'},
+  {svg:SVG_GIRASOLES, titulo:'Tu luz', msg:'Las flores amarillas no son casualidad.<br>Alguien las eligio pensando en ti,<br>porque eres exactamente eso: luz pura.'},
+  {svg:SVG_ROSAS, titulo:'Hoy te recuerdo', msg:'No hace falta una fecha especial<br>para pensar en vos.<br>Pero hoy el mundo pide flores amarillas<br>y yo solo pienso en regalartelas a ti.'},
+  {svg:SVG_GIRASOLES, titulo:'Primavera', msg:'Que este 21 de septiembre<br>traiga todo lo que mereces:<br>calor, flores y la certeza<br>de que alguien te quiere mucho.'},
+  {svg:SVG_ROSAS, titulo:'Para ti', msg:'Este ramo no se marchita.<br>Vive en cada momento que sonries,<br>en cada vez que alguien te mira<br>y no puede dejar de hacerlo.'}
+];
+
+var tarjetaIdx=0,tarjetaTimer=null,tarjetaAbierta=false;
+var overlayT=document.getElementById('overlay-tarjeta');
+var tSvg=document.getElementById('tarjeta-svg-wrap');
+var tTit=document.getElementById('tarjeta-titulo');
+var tMsg=document.getElementById('tarjeta-msg');
+var tCerrar=document.getElementById('tarjeta-cerrar');
+
+function mostrarTarjeta(){
+  if(tarjetaAbierta)return;
+  var card=TARJETAS[tarjetaIdx%TARJETAS.length];
+  tSvg.innerHTML=card.svg;
+  tTit.textContent=card.titulo;
+  tMsg.innerHTML=card.msg;
+  tarjetaIdx++;
+  tarjetaAbierta=true;
+  overlayT.classList.add('vis');
 }
-init();
-loop();
 
-// ═══════════════════════════════════════════════════════
-//  12. INTERACCIÓN
-// ═══════════════════════════════════════════════════════
-const entrada    = document.getElementById('entrada');
-const ui         = document.getElementById('ui');
-const controles  = document.getElementById('controles');
-const btnMusica  = document.getElementById('btnMusica');
-const btnVolver  = document.getElementById('btnVolver');
-const vizEl      = document.getElementById('vizCanvas');
+function cerrarTarjeta(){
+  tarjetaAbierta=false;
+  overlayT.classList.remove('vis');
+  clearTimeout(tarjetaTimer);
+  tarjetaTimer=setTimeout(mostrarTarjeta,5000);
+}
 
-function abrirGalaxia() {
-  activa = true;
+function iniciarTarjetas(){
+  clearTimeout(tarjetaTimer);
+  tarjetaIdx=0;tarjetaAbierta=false;
+  overlayT.classList.remove('vis');
+  tarjetaTimer=setTimeout(mostrarTarjeta,5000);
+}
+
+function detenerTarjetas(){
+  clearTimeout(tarjetaTimer);
+  tarjetaAbierta=false;
+  overlayT.classList.remove('vis');
+}
+
+tCerrar.addEventListener('click',cerrarTarjeta,{passive:true});
+tCerrar.addEventListener('touchend',function(e){e.preventDefault();cerrarTarjeta();},{passive:false});
+overlayT.addEventListener('click',function(e){if(e.target===overlayT)cerrarTarjeta();},{passive:true});
+overlayT.addEventListener('touchend',function(e){if(e.target===overlayT){e.preventDefault();cerrarTarjeta();}},{passive:false});
+
+// INTERACCION
+var entrada=document.getElementById('entrada');
+var ui=document.getElementById('ui');
+var controles=document.getElementById('controles');
+var btnMusica=document.getElementById('btnMusica');
+var vizEl=document.getElementById('vizCanvas');
+
+function abrirGalaxia(){
+  activa=true;
   cvs.classList.add('vis');
   vizEl.classList.add('vis');
-  setTimeout(()=> entrada.classList.add('ocultar'), 50);
-  setTimeout(()=>{
-    entrada.style.display = 'none';
+  setTimeout(function(){entrada.classList.add('ocultar');},50);
+  setTimeout(function(){
+    entrada.style.display='none';
     ui.classList.add('vis');
     controles.classList.add('vis');
     iniciarMusica();
-    btnMusica.textContent = '🔇 Silenciar';
-    iniciarTarjetas(); // ← tarjetas cada 5s
-  }, 1900);
+    iniciarTarjetas();
+  },1900);
 }
 
-function volverEntrada() {
-  activa = false;
+function volverEntrada(){
+  activa=false;
   detenerMusica();
-  detenerTarjetas(); // ← detener tarjetas
-  document.getElementById('notaMusica').style.display = 'none';
-  entrada.style.display = '';
-  setTimeout(()=> entrada.classList.remove('ocultar'), 20);
+  detenerTarjetas();
+  document.getElementById('notaMusica').style.display='none';
+  entrada.style.display='';
+  setTimeout(function(){entrada.classList.remove('ocultar');},20);
   cvs.classList.remove('vis');
   vizEl.classList.remove('vis');
   ui.classList.remove('vis');
   controles.classList.remove('vis');
   ctx.clearRect(0,0,W,H);
-  angRot=0; t=0;
-  btnMusica.textContent = '🎵 Música';
+  angRot=0;t=0;
 }
 
-btnMusica.addEventListener('click', ()=>{
-  if (musicaActiva) {
-    detenerMusica();
-    btnMusica.textContent = '🎵 Música';
-  } else {
-    iniciarMusica();
-    btnMusica.textContent = '🔇 Silenciar';
-  }
+btnMusica.addEventListener('click',function(){
+  if(musicaActiva){detenerMusica();}else{iniciarMusica();}
 });
-btnMusica.addEventListener('touchend', e=>{ e.preventDefault(); btnMusica.click(); },{ passive:false });
+btnMusica.addEventListener('touchend',function(e){e.preventDefault();btnMusica.click();},{passive:false});
 
 function bindBtn(el,fn){
   el.addEventListener('click',fn,{passive:true});
-  el.addEventListener('touchend',e=>{e.preventDefault();fn();},{passive:false});
+  el.addEventListener('touchend',function(e){e.preventDefault();fn();},{passive:false});
 }
-bindBtn(document.getElementById('florBtn'), abrirGalaxia);
-bindBtn(btnVolver, volverEntrada);
-
-// ═══════════════════════════════════════════════════════
-//  13. TARJETAS POÉTICAS — aparecen cada 5s
-// ═══════════════════════════════════════════════════════
-
-// SVG ramo de girasoles
-const SVG_GIRASOLES = `<svg width="180" height="190" viewBox="0 0 180 190" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="tgP" cx="50%" cy="20%" r="80%"><stop offset="0%" stop-color="#FFE234"/><stop offset="55%" stop-color="#FFC200"/><stop offset="100%" stop-color="#E06000"/></radialGradient>
-    <radialGradient id="tgC" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#8B4513"/><stop offset="60%" stop-color="#5D2E00"/><stop offset="100%" stop-color="#2A0E00"/></radialGradient>
-    <filter id="tfw"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <!-- tallos -->
-  <g stroke="#2d6a2d" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".85">
-    <path d="M90 165 Q85 140 75 115"/><path d="M90 165 Q92 138 90 108"/><path d="M90 165 Q96 142 108 118"/>
-    <path d="M90 165 Q78 148 62 128"/><path d="M90 165 Q100 150 118 132"/>
-  </g>
-  <!-- lazada -->
-  <ellipse cx="90" cy="166" rx="14" ry="7" fill="#b8860b" opacity=".9"/>
-  <path d="M78 162 Q84 170 90 166 Q96 162 102 168" stroke="#daa520" stroke-width="2" fill="none"/>
-  <!-- hojas -->
-  <ellipse cx="70" cy="138" rx="12" ry="6" fill="#2d7a2d" opacity=".7" transform="rotate(-30 70 138)"/>
-  <ellipse cx="112" cy="142" rx="12" ry="6" fill="#2d7a2d" opacity=".7" transform="rotate(25 112 142)"/>
-  <!-- flor grande centro -->
-  <g transform="translate(90,80)" filter="url(#tfw)">
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(45)"/>
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(90)"/>
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(135)"/>
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(180)"/>
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(225)"/>
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(270)"/>
-    <ellipse cx="0" cy="-26" rx="10" ry="22" fill="url(#tgP)" opacity=".8" transform="rotate(315)"/>
-  </g>
-  <circle cx="90" cy="80" r="18" fill="url(#tgC)" filter="url(#tfw)"/>
-  <!-- flor izquierda -->
-  <g transform="translate(58,100)" filter="url(#tfw)" opacity=".9">
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(60)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(120)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(180)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(240)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(300)"/>
-  </g>
-  <circle cx="58" cy="100" r="13" fill="url(#tgC)" filter="url(#tfw)"/>
-  <!-- flor derecha -->
-  <g transform="translate(122,104)" filter="url(#tfw)" opacity=".9">
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(60)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(120)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(180)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(240)"/>
-    <ellipse cx="0" cy="-20" rx="8" ry="17" fill="url(#tgP)" opacity=".75" transform="rotate(300)"/>
-  </g>
-  <circle cx="122" cy="104" r="13" fill="url(#tgC)" filter="url(#tfw)"/>
-  <!-- flor pequeña izq atrás -->
-  <g transform="translate(42,118)" filter="url(#tfw)" opacity=".7">
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(72)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(144)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(216)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(288)"/>
-  </g>
-  <circle cx="42" cy="118" r="10" fill="url(#tgC)" filter="url(#tfw)" opacity=".8"/>
-  <!-- flor pequeña der atrás -->
-  <g transform="translate(138,120)" filter="url(#tfw)" opacity=".7">
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(72)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(144)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(216)"/>
-    <ellipse cx="0" cy="-15" rx="6" ry="13" fill="url(#tgP)" opacity=".7" transform="rotate(288)"/>
-  </g>
-  <circle cx="138" cy="120" r="10" fill="url(#tgC)" filter="url(#tfw)" opacity=".8"/>
-  <!-- girasol pequeño arriba centro -->
-  <g transform="translate(90,52)" filter="url(#tfw)" opacity=".6">
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(22.5)"/>
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(67.5)"/>
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(112.5)"/>
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(157.5)"/>
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(202.5)"/>
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(247.5)"/>
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(292.5)"/>
-    <ellipse cx="0" cy="-14" rx="5" ry="11" fill="url(#tgP)" transform="rotate(337.5)"/>
-  </g>
-  <circle cx="90" cy="52" r="9" fill="url(#tgC)" opacity=".7"/>
-</svg>`;
-
-// SVG ramo de rosas amarillas
-const SVG_ROSAS = `<svg width="180" height="190" viewBox="0 0 180 190" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="rgP" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#FFF0A0"/><stop offset="50%" stop-color="#FFD000"/><stop offset="100%" stop-color="#C86000"/></radialGradient>
-    <radialGradient id="rgC" cx="45%" cy="40%" r="55%"><stop offset="0%" stop-color="#FFE060"/><stop offset="100%" stop-color="#CC8000"/></radialGradient>
-    <filter id="rfw"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <!-- tallos -->
-  <g stroke="#2d6a2d" stroke-width="3" stroke-linecap="round" fill="none" opacity=".85">
-    <path d="M90 168 Q86 145 78 118"/><path d="M90 168 Q91 142 90 112"/>
-    <path d="M90 168 Q95 144 105 120"/><path d="M90 168 Q80 150 65 132"/>
-    <path d="M90 168 Q98 148 115 135"/>
-  </g>
-  <!-- lazada -->
-  <ellipse cx="90" cy="168" rx="13" ry="6" fill="#b8860b" opacity=".9"/>
-  <path d="M79 164 Q85 172 90 168 Q95 164 101 170" stroke="#daa520" stroke-width="2" fill="none"/>
-  <!-- hojas -->
-  <ellipse cx="72" cy="140" rx="11" ry="5" fill="#2d7a2d" opacity=".7" transform="rotate(-28 72 140)"/>
-  <ellipse cx="110" cy="143" rx="11" ry="5" fill="#2d7a2d" opacity=".7" transform="rotate(22 110 143)"/>
-  <!-- función rosa: espirales de pétalos -->
-  <!-- rosa central grande -->
-  <g transform="translate(90,82)" filter="url(#rfw)">
-    <ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(0)"   opacity=".95"/>
-    <ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(51)"  opacity=".9"/>
-    <ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(102)" opacity=".85"/>
-    <ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(153)" opacity=".85"/>
-    <ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(204)" opacity=".9"/>
-    <ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(255)" opacity=".9"/>
-    <ellipse cx="0" cy="-18" rx="13" ry="8" fill="url(#rgP)" transform="rotate(306)" opacity=".95"/>
-    <ellipse cx="0" cy="-10" rx="9"  ry="6" fill="url(#rgC)" transform="rotate(25)"  opacity="1"/>
-    <ellipse cx="0" cy="-10" rx="9"  ry="6" fill="url(#rgC)" transform="rotate(85)"  opacity="1"/>
-    <ellipse cx="0" cy="-10" rx="9"  ry="6" fill="url(#rgC)" transform="rotate(145)" opacity="1"/>
-    <ellipse cx="0" cy="-10" rx="9"  ry="6" fill="url(#rgC)" transform="rotate(205)" opacity="1"/>
-    <ellipse cx="0" cy="-10" rx="9"  ry="6" fill="url(#rgC)" transform="rotate(265)" opacity="1"/>
-    <circle cx="0" cy="0" r="7" fill="#FFD700"/>
-  </g>
-  <!-- rosas laterales -->
-  <g transform="translate(60,103)" filter="url(#rfw)" opacity=".92">
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(60)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(120)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(180)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(240)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(300)"/>
-    <ellipse cx="0" cy="-8"  rx="7"  ry="5" fill="url(#rgC)" transform="rotate(30)"/>
-    <ellipse cx="0" cy="-8"  rx="7"  ry="5" fill="url(#rgC)" transform="rotate(150)"/>
-    <ellipse cx="0" cy="-8"  rx="7"  ry="5" fill="url(#rgC)" transform="rotate(270)"/>
-    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
-  </g>
-  <g transform="translate(120,105)" filter="url(#rfw)" opacity=".92">
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(60)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(120)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(180)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(240)"/>
-    <ellipse cx="0" cy="-14" rx="10" ry="6" fill="url(#rgP)" transform="rotate(300)"/>
-    <ellipse cx="0" cy="-8"  rx="7"  ry="5" fill="url(#rgC)" transform="rotate(30)"/>
-    <ellipse cx="0" cy="-8"  rx="7"  ry="5" fill="url(#rgC)" transform="rotate(150)"/>
-    <ellipse cx="0" cy="-8"  rx="7"  ry="5" fill="url(#rgC)" transform="rotate(270)"/>
-    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
-  </g>
-  <!-- rosas pequeñas traseras -->
-  <g transform="translate(44,122)" filter="url(#rfw)" opacity=".75">
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(72)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(144)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(216)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(288)"/>
-    <circle cx="0" cy="0" r="4" fill="#FFD700"/>
-  </g>
-  <g transform="translate(136,124)" filter="url(#rfw)" opacity=".75">
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(72)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(144)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(216)"/>
-    <ellipse cx="0" cy="-11" rx="8" ry="5" fill="url(#rgP)" transform="rotate(288)"/>
-    <circle cx="0" cy="0" r="4" fill="#FFD700"/>
-  </g>
-  <!-- rosa arriba centro -->
-  <g transform="translate(90,56)" filter="url(#rfw)" opacity=".7">
-    <ellipse cx="0" cy="-12" rx="9" ry="5" fill="url(#rgP)" transform="rotate(0)"/>
-    <ellipse cx="0" cy="-12" rx="9" ry="5" fill="url(#rgP)" transform="rotate(72)"/>
-    <ellipse cx="0" cy="-12" rx="9" ry="5" fill="url(#rgP)" transform="rotate(144)"/>
-    <ellipse cx="0" cy="-12" rx="9" ry="5" fill="url(#rgP)" transform="rotate(216)"/>
-    <ellipse cx="0" cy="-12" rx="9" ry="5" fill="url(#rgP)" transform="rotate(288)"/>
-    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
-  </g>
-</svg>`;
-
-// Datos de las tarjetas — alternan entre girasoles y rosas
-const TARJETAS = [
-  {
-    svg: SVG_GIRASOLES,
-    titulo: 'Tu risa',
-    msg: 'Hay risas que iluminan un cuarto entero.\nLa tuya es una de esas — la escucho\ny se me olvida todo lo demás.'
-  },
-  {
-    svg: SVG_ROSAS,
-    titulo: 'Pétalos dorados',
-    msg: 'Cada pétalo de esta flor es un gracias\ndistinto: por tu paciencia, tu cariño,\ny por dejarme quererte como quiero.'
-  },
-  {
-    svg: SVG_GIRASOLES,
-    titulo: 'Tu luz',
-    msg: 'Las flores amarillas no son casualidad.\nAlguien las eligió pensando en ti,\nporque eres exactamente eso: luz pura.'
-  },
-  {
-    svg: SVG_ROSAS,
-    titulo: 'Hoy te recuerdo',
-    msg: 'No hace falta una fecha especial\npara pensar en vos.\nPero hoy, el mundo pide flores amarillas\ny yo solo pienso en regalártelas a ti.'
-  },
-  {
-    svg: SVG_GIRASOLES,
-    titulo: 'Primavera',
-    msg: 'Que este 21 de septiembre\ntraiga todo lo que mereces:\ncalor, flores y la certeza\nde que alguien te quiere mucho.'
-  },
-  {
-    svg: SVG_ROSAS,
-    titulo: 'Para ti',
-    msg: 'Este ramo no se marchita.\nVive en cada momento que sonríes,\nen cada vez que alguien te mira\ny no puede dejar de hacerlo.'
-  },
-];
-
-let tarjetaIdx    = 0;
-let tarjetaTimer  = null;
-let tarjetaAbierta = false;
-
-const overlayTarjeta = document.getElementById('overlay-tarjeta');
-const tarjetaSvgWrap = document.getElementById('tarjeta-svg-wrap');
-const tarjetaTitulo  = document.getElementById('tarjeta-titulo');
-const tarjetaMsg     = document.getElementById('tarjeta-msg');
-const tarjetaCerrar  = document.getElementById('tarjeta-cerrar');
-
-function mostrarTarjeta() {
-  if (tarjetaAbierta) return;           // no abrir si ya hay una visible
-  const card = TARJETAS[tarjetaIdx % TARJETAS.length];
-  tarjetaSvgWrap.innerHTML = card.svg;
-  tarjetaTitulo.textContent = card.titulo;
-  // convertir saltos de línea en <br>
-  tarjetaMsg.innerHTML = card.msg.replace(/\n/g,'<br>');
-  tarjetaIdx++;
-  tarjetaAbierta = true;
-  overlayTarjeta.classList.add('vis');
-}
-
-function cerrarTarjeta() {
-  tarjetaAbierta = false;
-  overlayTarjeta.classList.remove('vis');
-  // reprogramar la siguiente para 5s después de cerrar
-  clearTimeout(tarjetaTimer);
-  tarjetaTimer = setTimeout(mostrarTarjeta, 5000);
-}
-
-function iniciarTarjetas() {
-  clearTimeout(tarjetaTimer);
-  tarjetaIdx = 0;
-  tarjetaAbierta = false;
-  overlayTarjeta.classList.remove('vis');
-  tarjetaTimer = setTimeout(mostrarTarjeta, 5000);
-}
-
-function detenerTarjetas() {
-  clearTimeout(tarjetaTimer);
-  tarjetaAbierta = false;
-  overlayTarjeta.classList.remove('vis');
-}
-
-// Cerrar con botón o toque fuera
-function bindCerrar(el, fn) {
-  el.addEventListener('click', fn, { passive: true });
-  el.addEventListener('touchend', e => { e.preventDefault(); fn(); }, { passive: false });
-}
-bindCerrar(tarjetaCerrar, cerrarTarjeta);
-document.addEventListener('touchmove', e=>e.preventDefault(),{passive:false});
+bindBtn(document.getElementById('florBtn'),abrirGalaxia);
+bindBtn(document.getElementById('btnVolver'),volverEntrada);
+document.addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
 </script>
 </body>
 </html>
